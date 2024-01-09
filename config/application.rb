@@ -20,9 +20,9 @@ module ParseChannels
     # config.eager_load_paths << Rails.root.join("extras")
 
     if Rails.env.development?
-      $REDIS_HOST = 'redis://127.0.0.1:9736'
+      $REDIS_HOST = 'redis://127.0.0.1:6379'
     elsif Rails.env.test?
-      $REDIS_HOST = 'redis://127.0.0.1:9736'
+      $REDIS_HOST = 'redis://127.0.0.1:6379'
     elsif Rails.env.production?
       $REDIS_HOST = 'redis://redis:6379'
     end

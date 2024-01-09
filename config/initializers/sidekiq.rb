@@ -1,4 +1,4 @@
-redis_url = "#{$REDIS_HOST}/5"
+redis_url = "#{$REDIS_HOST}/7"
 redis_url = "#{$REDIS_HOST}/#{ENV['TEST_ENV_NUMBER'] || 0}" if Rails.env.test?
 
 Sidekiq.configure_server do |config|
@@ -8,11 +8,11 @@ Sidekiq.configure_server do |config|
     schedule_file = 'config/schedule.yml'
 
     if File.exist?(schedule_file)
-      schedule = YAML.load_file(schedule_file)
-
-      Sidekiq::Cron::Job.load_from_hash!(schedule, source: 'schedule')
+      Sidekiq::Cron::Job.destroy_all!
+      Sidekiq::Cron::Job.load_from_hash!(YAML.load_file(schedule_file))
     end
   end
+
 end
 
 Sidekiq.configure_client do |config|

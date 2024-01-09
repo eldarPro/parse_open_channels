@@ -1,0 +1,2 @@
+1) channel = Channel.where(name: nil, joinchat: nil).count = 9
+Привести в порядок

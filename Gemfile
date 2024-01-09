@@ -19,7 +19,11 @@ gem "puma", "~> 5.0"
 gem "jbuilder"
 
 # Use Redis adapter to run Action Cable in production
-gem "redis", "~> 4.0"
+gem "redis"
+gem 'socksify', '1.7.1' 
+gem 'foreman'
+
+gem 'faraday-typhoeus'
 
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
 # gem "kredis"
@@ -39,6 +43,7 @@ gem "bootsnap", require: false
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 
+gem 'pg'
 gem 'sidekiq'
 gem "sidekiq-cron"
 gem 'kaminari'
@@ -65,3 +70,7 @@ group :test do
   gem "selenium-webdriver"
   gem "webdrivers"
 end
+
+gem "typhoeus", "~> 1.4"
+
+gem "faraday", "~> 2.7"

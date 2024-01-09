@@ -1,3 +1,18 @@
-# email_job:
-#    cron: "*/5 * * * *"
-#    class: "SendBulkEmailJob"
+scheduler_parse_channel_workers:
+  cron: "0 * * * *"
+  class: "SchedulerParseChannelWorker"
+  queue: job_scheduler_queue
+update_channel_info_workers:
+  cron: "*/10 * * * *"
+  class: "UpdateChannelsWorker"
+  queue: critical_queue
+create_posts_workers:
+  cron: "*/5 * * * *"
+  class: "CreatePostsWorker"
+  queue: critical_queue
+update_post_views_workers:
+  cron: "*/5 * * * *"
+  class: "UpdatePostsWorker"
+  queue: critical_queue
+
+
