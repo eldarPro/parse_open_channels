@@ -48,6 +48,9 @@ gem 'sidekiq'
 gem "sidekiq-cron"
 gem 'kaminari'
 
+gem "capistrano-rvm"
+
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
@@ -62,6 +65,12 @@ group :development do
 
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"
+
+  # ==== DEPLOY =====
+  gem "capistrano", "~> 3.18", require: false
+  gem "capistrano-rails", "~> 1.6", require: false
+  gem 'capistrano-rbenv', "~> 2.2", require: false
+  gem "capistrano-secrets-yml"
 end
 
 group :test do
