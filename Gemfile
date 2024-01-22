@@ -20,7 +20,6 @@ gem "jbuilder"
 
 # Use Redis adapter to run Action Cable in production
 gem "redis"
-gem 'redis-store'
 gem 'redis-rails'
 
 gem 'socksify', '1.7.1' 
