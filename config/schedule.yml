@@ -2,7 +2,10 @@ update_channel_info_workers:
   cron: "/1 * * * *"
   class: "TestWorker"
   queue: default
-
+parsing_logs_worker:
+  cron: "/3 * * * *"
+  class: "ParsingLogsWorker"
+  queue: default
 # scheduler_parse_channel_workers:
 #   cron: "0 * * * *"
 #   class: "SchedulerParseChannelWorker"

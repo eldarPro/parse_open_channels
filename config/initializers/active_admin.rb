@@ -6,6 +6,12 @@ ActiveAdmin.setup do |config|
   #
   config.site_title = 'Parse Open Channels'
 
+  config.namespace :admin do |admin|
+    admin.build_menu do |menu|
+      menu.add label: 'Jobs', url: '/jobs'
+    end
+  end
+
   # Set the link url for the title. For example, to take
   # users to your main site. Defaults to no link.
   #
