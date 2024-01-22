@@ -30,10 +30,34 @@ set :rbenv_ruby, '3.3.0'
 set :rbenv_prefix, "RBENV_ROOT=#{fetch(:rbenv_path)} RBENV_VERSION=#{fetch(:rbenv_ruby)} #{fetch(:rbenv_path)}/bin/rbenv exec"
 set :rbenv_roles, :all
 
-set :sidekiq_default_hooks, -> { false }
-
 append :linked_files, "config/master.key"
 append :linked_dirs, 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'vendor/bundle', '.bundle', 'public/system', 'public/uploads'
+
+namespace :sidekiq do
+  desc 'Stop sidekiq'
+  task :stop do
+    on roles(:app) do
+      execute "cd #{release_path} && bundle exec sidekiqctl stop #{shared_path}/tmp/pids/sidekiq.pid"
+    end
+  end
+
+  desc 'Start sidekiq'
+  task :start do
+    on roles(:app) do
+      execute "cd #{release_path} && bundle exec sidekiq -e #{fetch(:rails_env)} -C config/sidekiq.yml -d"
+    end
+  end
+
+  desc 'Restart sidekiq'
+  task :restart do
+    on roles(:app) do
+      invoke 'sidekiq:stop'
+      invoke 'sidekiq:start'
+    end
+  end
+end
+
+after 'deploy:publishing', 'sidekiq:restart'
 
 # namespace :deploy do
 #   desc "Run seed"
