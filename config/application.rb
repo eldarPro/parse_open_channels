@@ -24,7 +24,7 @@ module ParseChannels
     elsif Rails.env.test?
       $REDIS_HOST = 'redis://127.0.0.1:6379'
     elsif Rails.env.production?
-      $REDIS_HOST = 'redis://redis:6379'
+      $REDIS_HOST = 'redis://localhost:6379'
     end
 
     config.active_job.queue_adapter = :sidekiq
