@@ -57,7 +57,6 @@ namespace :sidekiq do
 end
 
 after 'deploy:restart', 'sidekiq:restart'
-after 'deploy:start', 'sidekiq:start'
 
 # namespace :deploy do
 #   desc "Run seed"
