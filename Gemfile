@@ -79,6 +79,7 @@ group :development do
   gem "capistrano-rails", "~> 1.6", require: false
   gem 'capistrano-rbenv', "~> 2.2", require: false
   gem 'capistrano3-puma', "~> 5.2", require: false
+  gem 'capistrano-sidekiq'
 end
 
 group :test do
