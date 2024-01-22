@@ -57,7 +57,6 @@ namespace :sidekiq do
 end
 
 after 'deploy:restart', 'sidekiq:restart'
-after 'deploy:stop', 'sidekiq:stop'
 after 'deploy:start', 'sidekiq:start'
 
 # namespace :deploy do
