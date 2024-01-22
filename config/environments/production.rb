@@ -55,6 +55,8 @@ Rails.application.configure do
   # Prepend all log lines with the following tags.
   config.log_tags = [ :request_id ]
 
+  config.active_record.cache_versioning = true
+
   # Use a different cache store in production.
   config.cache_store = :redis_store
   # Use a real queuing backend for Active Job (and separate queues per environment).
