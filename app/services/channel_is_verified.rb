@@ -1,4 +1,4 @@
-def ChannelIsVerified
+class ChannelIsVerified
 
   attr_accessor :doc
 
