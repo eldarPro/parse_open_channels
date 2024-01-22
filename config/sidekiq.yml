@@ -2,6 +2,8 @@
 :pidfile: tmp/pids/sidekiq.pid
 development:
   :concurrency: 180
+production:
+  :concurrency: 180
 :queues:
   - critical
   - default
