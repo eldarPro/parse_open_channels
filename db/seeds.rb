@@ -5,3 +5,4 @@
 #
 #   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
 #   Character.create(name: "Luke", movie: movies.first)
+User.create!(email: 'admin@open_parsing.com', password: 'parse_open987', password_confirmation: 'parse_open987') if Rails.env.development?

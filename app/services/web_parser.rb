@@ -3,88 +3,108 @@ class WebParser
   attr_accessor :channel_id
   attr_accessor :channel_name
   attr_accessor :before_post_id
-  attr_accessor :parse_mode
   attr_accessor :first_page_parse
-  attr_accessor :info
-  attr_accessor :last_post_id
-  attr_accessor :new_last_post_id
-  attr_accessor :last_post_date
+  attr_accessor :post_views_key
+  attr_accessor :count_posts
 
   CHANGE_STRUCT = 'change_struct'
 
-  def initialize(channel_id, channel_name, last_post_id, before_post_id = nil)
+  def initialize(channel_id, channel_name, before_post_id = nil, count_posts = 0)
     @channel_id       = channel_id
     @channel_name     = channel_name
     @before_post_id   = before_post_id
     @first_page_parse = before_post_id.nil?
-    @last_post_id     = last_post_id
-    @new_last_post_id = last_post_id
-    @last_post_date   = last_post_date
-    @parse_mode       = :by_web_parse
+    @post_views_key   = "post_views:#{channel_id}:#{Time.now.strftime('%d_%H')}"
+    @count_posts      = count_posts
   end
 
   def parse
-    return if channel_name.blank?
+    return if channel_id.blank? || channel_name.blank?
 
     # Если это парсинг первой страницы постов, то парсит параллельно посты и канал, иначе только посты
     if first_page_parse
-      thread1 = Thread.new { parse_channel_posts }
-      thread2 = Thread.new { update_channel_info }
+      thread1 = Thread.new { parse_posts(before_post_id) }
+      thread2 = Thread.new { parse_channels }
 
       thread1.join
       thread2.join
 
-      channel_info_data = thread2.value << parse_mode rescue nil
-      channel_info_data << new_last_post_id
-      channel_info_data << last_post_date
-      Redis0.rpush('update_channels_data', channel_info_data.to_json) if channel_info_data.present?
+      result_parse_posts = thread1.value
+      channels = thread2.value
     else
-      parse_channel_posts
+      result_parse_posts = parse_posts(before_post_id)
+      channels = []
     end
+
+    parse_mode     = result_parse_posts[0] rescue :by_web_parse
+    last_post_id   = result_parse_posts[1] rescue nil
+    last_post_date = result_parse_posts[2] rescue nil
+
+    #========= КАНАЛЫ ===============
+    return unless channels.present?
+    channels << parse_mode
+    channels << last_post_id
+    channels << last_post_date
+    Redis0.rpush('channels_data', channels.to_json)
   end
 
   private
 
-  def parse_channel_posts
-    part_posts = get_posts(before_post_id)
-    return if part_posts.blank? 
-
-    # Если изменилась структура скелета, то бьет тревогу
-    if part_posts == CHANGE_STRUCT
-      SendAlertMessage.new('Изменилась структура постов парсинга').call 
-      return
-    end
-
-    # Забирает нужные данные из поста для обновления канала
-    if first_page_parse
-      new_last_post_id = part_posts.last[1] 
-      last_post_date   = part_posts.last[6]
-    end
+  def parse_posts(before_post_id)
+    url = "https://t.me/s/#{channel_name}?before=#{before_post_id}"
+    doc = SendRequest.new(url).call
     
-    before_post_id = part_posts.first[1]
+    parse_mode = :by_telethon_parse
+    posts      = []
 
-    present_old_7day_post = false
-
-    part_posts.each do |post_data| 
-      present_old_7day_post = true and next if post_data[6] < 7.days.ago # published_at < 7.days.ago
-
-      # Определяет в какой хранилище добавить данные: для обновления или добавления постов
-      if last_post_id.present? && last_post_id >= post_data[1]
-        remove_data_for_update_post(post_data) # Удаляет ненужные данные для обновления
-        Redis0.rpush('update_posts_data', post_data.to_json)
-      else
-        Redis0.rpush('create_posts_data', post_data.to_json)
+    if doc&.css(".tgme_widget_message").present?
+      parse_mode = :by_web_parse
+      doc.css(".tgme_widget_message").each.with_index do |post_html, inx|
+        post_id = post_html.attr('data-post')&.split('/')&.last&.to_i
+        next if post_id.nil? || post_id == 1 # Если id отсутствует или это первый пост (дата добавления), то пропускает
+        next if post_html.css(".service_message")&.count > 0 # Есть такой, пока не понятно для чего
+        # Если нет блока просмотров, то скорее всего это закреление, и не добавляет в список
+        next if post_html.css(".tgme_widget_message_views").blank?
+        post_data = GetPostDataFromHtml.new(post_html, doc).call
+        posts = CHANGE_STRUCT and break if post_data == CHANGE_STRUCT # Если изменилась структура скелета
+        add_other_data_to_post_data(post_data) # Добавление данных не из парсинга 
+        posts << post_data
       end
     end
 
-    return if present_old_7day_post # Если есть пост, который старше 7 дней, то прекращает запросы
-    
-    # А если еще нет поста страше 7-ми дней, то идет парсинг следующей страницы
-    # с подачей номера поста от которого надо исходить, чтобы найти предыдущие посты
-    ParseChannelWorker.perform_async(channel_id, channel_name, last_post_id, before_post_id)
+    if posts.present? 
+      # Если изменилась структура скелета, то бьет тревогу
+      if posts == CHANGE_STRUCT
+        SendAlertMessage.new('Изменилась структура постов парсинга').call 
+        return
+      end
+
+      present_old_7day_post = false
+
+      posts.each do |post_data| 
+        present_old_7day_post = true and next if post_data[6] < 7.days.ago # published_at < 7.days.ago
+        Redis0.rpush('posts_data', post_data.to_json)
+      end
+
+      # Добавляет просмотры постов в массив для дальнейшей обработки
+      # количества среднего просмотра у канала
+      add_post_views_to_storage(posts)
+
+      current_count_posts = count_posts + posts.length
+
+      # А если еще нет поста страше 7-ми дней, то идет парсинг следующей страницы
+      # с подачей номера поста от которого надо исходить, чтобы найти предыдущие посты
+      return if present_old_7day_post || current_count_posts > 70
+      ParseChannelWorker.perform_async(channel_id, channel_name, posts.first[1], current_count_posts) 
+    end
+
+    last_post_id   = posts.last[1] rescue nil
+    last_post_date = posts.last[6] rescue nil
+
+    [parse_mode, last_post_id, last_post_date]
   end
 
-  def update_channel_info
+  def parse_channels
     link = "https://t.me/#{channel_name}"
 
     doc = SendRequest.new(link, proxy: true).call
@@ -106,35 +126,13 @@ class WebParser
     [channel_id, subscribers, title, description, is_verify, update_info_at]
   end
 
-  def get_posts(before_post_id)
-    url = "https://t.me/s/#{channel_name}?before=#{before_post_id}"
-    doc = SendRequest.new(url).call
-    
-    # Если блок tgme_widget_message отсутсвует, значит = by_telethon_parse,
-    # то есть, канал закрытый, поэтому прекращает дальнейший парсинг
-    # Проверку делает только один раз при парсинге первой страницы
-    if first_page_parse && doc&.css(".tgme_widget_message").blank?
-      parse_mode = :by_telethon_parse 
-      return nil
-    end
-    
-    res = []
-
-    return res if doc&.css(".tgme_widget_message").blank?
-
-    doc.css(".tgme_widget_message").each.with_index do |post_html, inx|
-      post_id = post_html.attr('data-post')&.split('/')&.last&.to_i
-      next if post_id.nil? || post_id == 1 # Если id отсутствует или это первый пост (дата добавления), то пропускает
-      next if post_html.css(".service_message")&.count > 0 # Есть такой, пока не понятно для чего
-      # Если нет блока просмотров, то скорее всего это закреление, и не добавляет в список
-      next if post_html.css(".tgme_widget_message_views").blank?
-      post_data = GetPostDataFromHtml.new(post_html, doc).call
-      res = CHANGE_STRUCT and break if post_data == CHANGE_STRUCT # Если изменилась структура скелета
-      add_other_data_to_post_data(post_data) # Добавление данных не из парсинга 
-      res << post_data
-    end
-
-    res
+  # Добавляет просмотры постов в массив для дальнейшей обработки
+  # количества среднего просмотра у канала
+  def add_post_views_to_storage(posts)
+    post_views = posts.map{ _1[2] }
+    return unless post_views.present?
+    Redis0.rpush(post_views_key, post_views) 
+    Redis0.expire(post_views_key, 1.hour) if first_page_parse
   end
 
   def add_other_data_to_post_data(post_data)
@@ -152,10 +150,6 @@ class WebParser
     post_data << top_hours
     post_data << Time.now
     post_data 
-  end
-
-  def remove_data_for_update_post(post_data)
-    post_data.delete_at(6) # delete published_at
   end
 
 end

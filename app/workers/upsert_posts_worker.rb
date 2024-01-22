@@ -1,16 +1,18 @@
-# Планировщик добавления постов в БД
-class SchedulerCreatePostsWorker
+# Планировщик добавления/обновления постов в БД
+class UpsertPostsWorker
   include Sidekiq::Worker
-  sidekiq_options queue: :job_scheduler_queue, retry: 0
+  sidekiq_options queue: :critical, retry: 0
 
   def perform 
-    count_batch = (Redis0.llen('create_posts_data') / 10000.0).ceil
+    # Обновление по 10к штук
+    count_batch = (Redis0.llen('posts_data') / 1000.0).ceil
 
     count_batch.times do
-      values = Redis0.lrange('create_posts_data', 0, 99999)
+      values = Redis0.lrange('posts_data', 0, 999)
 
-      insert_values = values.map do |v| 
-        val = JSON.parse(v)
+      values = values.map{ JSON.parse(_1) }.uniq{ _1[0] }
+
+      upsert_values = values.map do |val| 
         "(#{[ActiveRecord::Base.connection.quote(val[0]),
          ActiveRecord::Base.connection.quote(val[1]),
          ActiveRecord::Base.connection.quote(val[2]),
@@ -31,13 +33,24 @@ class SchedulerCreatePostsWorker
          NOW())"
       end.join(', ')
 
-      ActiveRecord::Base.connection.execute("INSERT INTO posts 
+      ActiveRecord::Base.connection.execute("INSERT INTO posts AS p
         (link, tg_id, views, links, statistic, has_photo, has_video, published_at, next_post_at, html, is_repost, channel_id, skip_screen, feed_hours, top_hours, last_parsed_at, created_at, updated_at)
-        VALUES #{insert_values}") # ON CONFLICT (link) DO NOTHING; - добавить внутри когда будет уникальный индекс по link
+        VALUES #{upsert_values} ON CONFLICT (link) DO UPDATE
+        SET views = EXCLUDED.views, 
+        links = EXCLUDED.links::jsonb,
+        has_photo = EXCLUDED.has_photo,
+        has_video = EXCLUDED.has_video,
+        next_post_at = CAST(EXCLUDED.next_post_at AS TIMESTAMP WITH TIME ZONE),
+        html = EXCLUDED.html,
+        is_repost = EXCLUDED.is_repost,
+        feed_hours = EXCLUDED.feed_hours,
+        top_hours = EXCLUDED.top_hours,
+        last_parsed_at = CAST(EXCLUDED.last_parsed_at AS TIMESTAMP WITH TIME ZONE),
+        statistic = jsonb_insert(p.statistic, '{-1}', jsonb_build_object('views', (EXCLUDED.views::int - COALESCE(p.views, 0)::int), 'updated_at', EXCLUDED.last_parsed_at), true)
+      ")
 
-      Redis0.ltrim('create_posts_data', 0, 99999)
+      Redis0.ltrim('posts_data', 1000, -1)
     end
 
   end
 end
-

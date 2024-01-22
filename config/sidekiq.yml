@@ -1,7 +1,8 @@
 ---
 :pidfile: tmp/pids/sidekiq.pid
 development:
-  :concurrency: 120
+  :concurrency: 180
 :queues:
+  - critical
   - default
-  - job_scheduler_queue
+  - job_scheduler

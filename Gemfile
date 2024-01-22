@@ -1,10 +1,10 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby "3.1.2"
+ruby "3.3.0"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem "rails", "~> 7.0.4", ">= 7.0.4.3"
+gem "rails", "~> 7.0.8"
 
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails"
@@ -25,6 +25,14 @@ gem 'foreman'
 
 gem 'faraday-typhoeus'
 
+gem 'activeadmin'
+
+# Plus integrations with:
+gem 'devise'
+gem 'cancancan'
+gem 'draper'
+gem 'pundit'
+
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
 # gem "kredis"
 
@@ -38,7 +46,7 @@ gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw jruby ]
 gem "bootsnap", require: false
 
 # Use Sass to process CSS
-# gem "sassc-rails"
+gem "sassc-rails"
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
@@ -49,7 +57,6 @@ gem "sidekiq-cron"
 gem 'kaminari'
 
 gem "capistrano-rvm"
-
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -66,11 +73,12 @@ group :development do
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"
 
-  # ==== DEPLOY =====
+  # ----- DEPLOY -------
   gem "capistrano", "~> 3.18", require: false
+  gem 'capistrano-bundler', "~> 2.1", require: false
   gem "capistrano-rails", "~> 1.6", require: false
   gem 'capistrano-rbenv', "~> 2.2", require: false
-  gem "capistrano-secrets-yml"
+  gem 'capistrano3-puma', "~> 5.2", require: false
 end
 
 group :test do
@@ -79,7 +87,3 @@ group :test do
   gem "selenium-webdriver"
   gem "webdrivers"
 end
-
-gem "typhoeus", "~> 1.4"
-
-gem "faraday", "~> 2.7"

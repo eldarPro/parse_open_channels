@@ -6,9 +6,12 @@ default: &default
 
 development:
   <<: *default
-  # database: parse_channels
-  # username: postgres
-  # password: postgres
+  database: open_parsing
+  username: postgres
+  password: postgres
+
+main_db:
+  <<: *default
   database: telega_stat
   username: telega_stat_usr
   password: sLDFKJPjdshsldkj490345hkljshdfsdf#

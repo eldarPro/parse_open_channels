@@ -1,4 +1,4 @@
-jobs-1: RAILS_ENV=development bundle exec sidekiq
-jobs-2: RAILS_ENV=development bundle exec sidekiq
-jobs-3: RAILS_ENV=development bundle exec sidekiq
-jobs-4: RAILS_ENV=development bundle exec sidekiq
+critical-jobs-0: RAILS_ENV=development bundle exec sidekiq -q critical -q job_scheduler -c 1
+jobs-1: RAILS_ENV=development bundle exec sidekiq -q default
+jobs-2: RAILS_ENV=development bundle exec sidekiq -q default
+jobs-3: RAILS_ENV=development bundle exec sidekiq -q default
