@@ -26,6 +26,7 @@ gem 'foreman'
 gem 'faraday-typhoeus'
 
 gem 'activeadmin'
+gem 'active_skin'
 
 # Plus integrations with:
 gem 'devise'
@@ -79,7 +80,7 @@ group :development do
   gem "capistrano-rails", "~> 1.6", require: false
   gem 'capistrano-rbenv', "~> 2.2", require: false
   gem 'capistrano3-puma', "~> 5.2", require: false
-  gem 'capistrano-sidekiq'
+  gem 'capistrano-sidekiq', "~> 2.3", require: false
 end
 
 group :test do

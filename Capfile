@@ -14,6 +14,11 @@ require 'capistrano/puma'
 install_plugin Capistrano::Puma
 install_plugin Capistrano::Puma::Systemd
 
+require 'capistrano/sidekiq'
+install_plugin Capistrano::Sidekiq  # Default sidekiq tasks
+# Then select your service manager
+install_plugin Capistrano::Sidekiq::Systemd
+
 # Load the SCM plugin appropriate to your project:
 #
 # require "capistrano/scm/hg"
