@@ -1,14 +1,19 @@
+update_channel_info_workers:
+  cron: "/1 * * * *"
+  class: "TestWorker"
+  queue: default
+
 # scheduler_parse_channel_workers:
-#   cron: "/50 * * * *"
+#   cron: "0 * * * *"
 #   class: "SchedulerParseChannelWorker"
 #   queue: job_scheduler
-update_channel_info_workers:
-  cron: "10 * * * *"
-  class: "UpdateChannelsWorker"
-  queue: critical
-upsert_post_views_workers:
-  cron: "*/1 * * * *"
-  class: "UpsertPostsWorker"
-  queue: critical
+# update_channel_info_workers:
+#   cron: "10 * * * *"
+#   class: "UpdateChannelsWorker"
+#   queue: critical
+# upsert_post_views_workers:
+#   cron: "*/1 * * * *"
+#   class: "UpsertPostsWorker"
+#   queue: critical
 
 
