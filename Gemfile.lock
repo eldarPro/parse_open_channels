@@ -298,6 +298,8 @@ GEM
       redis-client (>= 0.17.0)
     redis-client (0.19.1)
       connection_pool
+    redis-store (1.10.0)
+      redis (>= 4, < 6)
     regexp_parser (2.9.0)
     reline (0.4.2)
       io-console (~> 0.5)
@@ -410,6 +412,7 @@ DEPENDENCIES
   pundit
   rails (~> 7.0.8)
   redis
+  redis-store
   sassc-rails
   selenium-webdriver
   sidekiq
