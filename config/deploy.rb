@@ -34,6 +34,8 @@ set :rbenv_roles, :all
 append :linked_files, "config/master.key"
 append :linked_dirs, 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'vendor/bundle', '.bundle', 'public/system', 'public/uploads'
 
+before 'deploy:assets:precompile', 'deploy:yarn_install'
+
 # namespace :deploy do
 #   desc "Run seed"
 #   task :seed do
