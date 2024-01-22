@@ -429,6 +429,7 @@ DEPENDENCIES
   rails (~> 7.0.8)
   redis
   redis-rails
+  redis-store
   sassc-rails
   selenium-webdriver
   sidekiq

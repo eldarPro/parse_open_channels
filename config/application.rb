@@ -27,6 +27,8 @@ module ParseChannels
       $REDIS_HOST = 'redis://localhost:6379'
     end
 
+    config.active_record.cache_versioning = false
+
     config.active_job.queue_adapter = :sidekiq
   end
 end
