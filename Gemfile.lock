@@ -257,6 +257,8 @@ GEM
     raabro (1.4.0)
     racc (1.7.3)
     rack (2.2.8)
+    rack-session (1.0.2)
+      rack (< 3)
     rack-test (2.1.0)
       rack (>= 1.3)
     rails (7.0.8)
@@ -296,8 +298,22 @@ GEM
       psych (>= 4.0.0)
     redis (5.0.8)
       redis-client (>= 0.17.0)
+    redis-actionpack (5.4.0)
+      actionpack (>= 5, < 8)
+      redis-rack (>= 2.1.0, < 4)
+      redis-store (>= 1.1.0, < 2)
+    redis-activesupport (5.3.0)
+      activesupport (>= 3, < 8)
+      redis-store (>= 1.3, < 2)
     redis-client (0.19.1)
       connection_pool
+    redis-rack (3.0.0)
+      rack-session (>= 0.2.0)
+      redis-store (>= 1.2, < 2)
+    redis-rails (5.0.2)
+      redis-actionpack (>= 5.0, < 6)
+      redis-activesupport (>= 5.0, < 6)
+      redis-store (>= 1.2, < 2)
     redis-store (1.10.0)
       redis (>= 4, < 6)
     regexp_parser (2.9.0)
@@ -412,6 +428,7 @@ DEPENDENCIES
   pundit
   rails (~> 7.0.8)
   redis
+  redis-rails
   redis-store
   sassc-rails
   selenium-webdriver
