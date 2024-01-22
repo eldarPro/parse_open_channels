@@ -35,28 +35,6 @@ set :sidekiq_default_hooks, -> { false }
 append :linked_files, "config/master.key"
 append :linked_dirs, 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'vendor/bundle', '.bundle', 'public/system', 'public/uploads'
 
-namespace :sidekiq do
-  task :restart do
-    on roles(:app) do
-      execute :sudo, :systemctl, :restart, 'sidekiq'
-    end
-  end
-
-  task :stop do
-    on roles(:app) do
-      execute :sudo, :systemctl, :stop, 'sidekiq'
-    end
-  end
-
-  task :start do
-    on roles(:app) do
-      execute :sudo, :systemctl, :start, 'sidekiq'
-    end
-  end
-end
-
-after 'deploy:restart', 'sidekiq:restart'
-
 # namespace :deploy do
 #   desc "Run seed"
 #   task :seed do
