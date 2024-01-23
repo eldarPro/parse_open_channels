@@ -15,8 +15,8 @@ install_plugin Capistrano::Puma
 install_plugin Capistrano::Puma::Systemd
 
 require 'capistrano/sidekiq'
-install_plugin Capistrano::Sidekiq  # Default sidekiq tasks
-install_plugin Capistrano::Sidekiq::Systemd
+#install_plugin Capistrano::Sidekiq  # Default sidekiq tasks
+#install_plugin Capistrano::Sidekiq::Systemd
 
 # Load the SCM plugin appropriate to your project:
 #
