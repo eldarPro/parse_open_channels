@@ -34,11 +34,12 @@ append :linked_files, "config/master.key"
 append :linked_dirs, 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'vendor/bundle', '.bundle', 'public/system', 'public/uploads'
 
 set :sidekiq_config_files, ['sidekiq.yml']
+set :sidekiq_default_hooks, -> { true }
 # namespace :sidekiq do
 #   desc 'Stop sidekiq'
 #   task :stop do
 #     on roles(:app) do
-#       #execute "cd #{release_path} && bundle exec sidekiqctl stop #{shared_path}/tmp/pids/sidekiq.pid"
+#       #execute "cd #{release_path} && bundle exec sidekiq -d"
 #     end
 #   end
 
