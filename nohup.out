@@ -280,3 +280,9 @@
 11:25:19 jobs-1.1          | 2024-01-23T08:25:19.295Z pid=2553613 tid=1i6v5 class=TestWorker jid=8b6dfc9323a55e766df90050 INFO: start
 11:26:01 jobs-3.1          | 2024-01-23T08:26:01.215Z pid=2553617 tid=1i90p class=TestWorker jid=fac886a5557abb787b536ca0 INFO: start
 11:26:12 jobs-2.1          | 2024-01-23T08:26:12.755Z pid=2553615 tid=1i74n class=TestWorker jid=056d1e863bfa8dec498c015d elapsed=120.006 INFO: done
+11:27:12 jobs-2.1          | 2024-01-23T08:27:12.853Z pid=2553615 tid=1i74n class=TestWorker jid=d80a5b0cebee7eaeefb647d2 INFO: start
+11:27:12 jobs-1.1          | 2024-01-23T08:27:12.860Z pid=2553613 tid=1i6mx class=ParsingLogsWorker jid=e892667061581e3017d67472 INFO: start
+11:27:12 jobs-1.1          | 2024-01-23T08:27:12.863Z pid=2553613 tid=1i6mx class=ParsingLogsWorker jid=e892667061581e3017d67472 elapsed=0.003 INFO: done
+11:27:19 jobs-1.1          | 2024-01-23T08:27:19.301Z pid=2553613 tid=1i6v5 class=TestWorker jid=8b6dfc9323a55e766df90050 elapsed=120.006 INFO: done
+11:28:01 jobs-3.1          | 2024-01-23T08:28:01.223Z pid=2553617 tid=1i90p class=TestWorker jid=fac886a5557abb787b536ca0 elapsed=120.007 INFO: done
+11:28:07 jobs-1.1          | 2024-01-23T08:28:07.814Z pid=2553613 tid=1iba9 class=TestWorker jid=f120dc51cd4dfe5cd9b86b31 INFO: start
