@@ -44,7 +44,7 @@ namespace :sidekiq do
   desc 'Start sidekiq'
   task :start do
     on roles(:app) do
-      execute "cd #{release_path} && /home/deployer/.rbenv/shims/bundle exec sidekiq -e production"
+      execute "cd #{release_path} && /home/deployer/.rbenv/shims/bundle exec foreman start -f Procfile_sidekiq &"
     end
   end
 
