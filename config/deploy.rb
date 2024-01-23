@@ -33,31 +33,39 @@ set :rbenv_roles, :all
 append :linked_files, "config/master.key"
 append :linked_dirs, 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'vendor/bundle', '.bundle', 'public/system', 'public/uploads'
 
-namespace :sidekiq do
-  desc 'Stop sidekiq'
-  task :stop do
-    on roles(:app) do
-      #execute "cd #{release_path} && bundle exec sidekiqctl stop #{shared_path}/tmp/pids/sidekiq.pid"
-    end
-  end
+set :sidekiq_config_files, ['sidekiq.yml']
+# namespace :sidekiq do
+#   desc 'Stop sidekiq'
+#   task :stop do
+#     on roles(:app) do
+#       #execute "cd #{release_path} && bundle exec sidekiqctl stop #{shared_path}/tmp/pids/sidekiq.pid"
+#     end
+#   end
 
-  desc 'Start sidekiq'
-  task :start do
-    on roles(:app) do
-      execute "cd #{release_path} && /home/deployer/.rbenv/shims/bundle exec foreman start -f Procfile_sidekiq &"
-    end
-  end
+#   desc 'Start sidekiq'
+#   task :start do
+#     on roles(:app) do
+#       execute "cd #{release_path} && /home/deployer/.rbenv/shims/bundle exec foreman start -f Procfile_sidekiq &"
+#     end
+#   end
 
-  desc 'Restart sidekiq'
-  task :restart do
-    on roles(:app) do
-      invoke 'sidekiq:stop'
-      invoke 'sidekiq:start'
-    end
-  end
-end
+#   desc 'Restart sidekiq'
+#   task :restart do
+#     on roles(:app) do
+#       invoke 'sidekiq:stop'
+#       invoke 'sidekiq:start'
+#     end
+#   end
+# end
 
-after 'deploy:publishing', 'sidekiq:restart'
+# after 'deploy:publishing', 'sidekiq:restart'
+
+# task :add_default_hooks do  
+#   after 'deploy:starting', 'sidekiq:quiet'
+#   after 'deploy:updated', 'sidekiq:stop'
+#   after 'deploy:reverted', 'sidekiq:stop'
+#   after 'deploy:published', 'sidekiq:start'
+# end
 
 # namespace :deploy do
 #   desc "Run seed"
