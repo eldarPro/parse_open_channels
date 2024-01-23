@@ -37,7 +37,7 @@ namespace :sidekiq do
   desc 'Stop sidekiq'
   task :stop do
     on roles(:app) do
-      execute "cd #{release_path} && bundle exec sidekiqctl stop #{shared_path}/tmp/pids/sidekiq.pid"
+      #execute "cd #{release_path} && bundle exec sidekiqctl stop #{shared_path}/tmp/pids/sidekiq.pid"
     end
   end
 
