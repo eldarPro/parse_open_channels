@@ -286,3 +286,21 @@
 11:27:19 jobs-1.1          | 2024-01-23T08:27:19.301Z pid=2553613 tid=1i6v5 class=TestWorker jid=8b6dfc9323a55e766df90050 elapsed=120.006 INFO: done
 11:28:01 jobs-3.1          | 2024-01-23T08:28:01.223Z pid=2553617 tid=1i90p class=TestWorker jid=fac886a5557abb787b536ca0 elapsed=120.007 INFO: done
 11:28:07 jobs-1.1          | 2024-01-23T08:28:07.814Z pid=2553613 tid=1iba9 class=TestWorker jid=f120dc51cd4dfe5cd9b86b31 INFO: start
+11:29:02 jobs-2.1          | 2024-01-23T08:29:02.869Z pid=2553615 tid=1ibbv class=TestWorker jid=2347dd9f27c4617876be722d INFO: start
+11:29:12 jobs-2.1          | 2024-01-23T08:29:12.862Z pid=2553615 tid=1i74n class=TestWorker jid=d80a5b0cebee7eaeefb647d2 elapsed=120.009 INFO: done
+11:30:05 jobs-1.1          | 2024-01-23T08:30:05.440Z pid=2553613 tid=1i775 class=TestWorker jid=c8aef1e5fa8be1bfed3084d4 INFO: start
+11:30:05 jobs-1.1          | 2024-01-23T08:30:05.452Z pid=2553613 tid=1i6hl class=ParsingLogsWorker jid=639ab7e2bb54f4143e442348 INFO: start
+11:30:05 jobs-1.1          | 2024-01-23T08:30:05.458Z pid=2553613 tid=1i6hl class=ParsingLogsWorker jid=639ab7e2bb54f4143e442348 elapsed=0.006 INFO: done
+11:30:07 jobs-1.1          | 2024-01-23T08:30:07.823Z pid=2553613 tid=1iba9 class=TestWorker jid=f120dc51cd4dfe5cd9b86b31 elapsed=120.008 INFO: done
+11:31:02 jobs-2.1          | 2024-01-23T08:31:02.876Z pid=2553615 tid=1ibbv class=TestWorker jid=2347dd9f27c4617876be722d elapsed=120.006 INFO: done
+11:31:06 jobs-1.1          | 2024-01-23T08:31:06.756Z pid=2553613 tid=1i6v5 class=TestWorker jid=69948abffc396eec36abf741 INFO: start
+11:32:05 jobs-1.1          | 2024-01-23T08:32:05.409Z pid=2553613 tid=1ib7d class=TestWorker jid=309128061acab26ce9977fb8 INFO: start
+11:32:05 jobs-1.1          | 2024-01-23T08:32:05.457Z pid=2553613 tid=1i775 class=TestWorker jid=c8aef1e5fa8be1bfed3084d4 elapsed=120.017 INFO: done
+11:33:01 jobs-2.1          | 2024-01-23T08:33:01.453Z pid=2553615 tid=1ibbv class=TestWorker jid=392a0e8cd48aa813f86b553f INFO: start
+11:33:01 jobs-1.1          | 2024-01-23T08:33:01.457Z pid=2553613 tid=1i775 class=ParsingLogsWorker jid=b97b8a57417490ddd84fce8f INFO: start
+11:33:01 jobs-1.1          | 2024-01-23T08:33:01.461Z pid=2553613 tid=1i775 class=ParsingLogsWorker jid=b97b8a57417490ddd84fce8f elapsed=0.004 INFO: done
+11:33:06 jobs-1.1          | 2024-01-23T08:33:06.759Z pid=2553613 tid=1i6v5 class=TestWorker jid=69948abffc396eec36abf741 elapsed=120.004 INFO: done
+11:34:02 jobs-3.1          | 2024-01-23T08:34:02.572Z pid=2553617 tid=1i6yx class=TestWorker jid=3c2dd6d5cbe8753abda0ca54 INFO: start
+11:34:05 jobs-1.1          | 2024-01-23T08:34:05.413Z pid=2553613 tid=1ib7d class=TestWorker jid=309128061acab26ce9977fb8 elapsed=120.004 INFO: done
+11:35:01 jobs-2.1          | 2024-01-23T08:35:01.456Z pid=2553615 tid=1ibbv class=TestWorker jid=392a0e8cd48aa813f86b553f elapsed=120.003 INFO: done
+11:35:04 jobs-1.1          | 2024-01-23T08:35:04.296Z pid=2553613 tid=1i775 class=TestWorker jid=bc2fbcdcbb8551d48b1ac050 INFO: start
