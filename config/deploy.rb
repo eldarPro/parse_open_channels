@@ -44,7 +44,7 @@ namespace :sidekiq do
   desc 'Start sidekiq'
   task :start do
     on roles(:app) do
-      execute "cd #{release_path} && bundle exec sidekiq -e #{fetch(:rails_env)} -C config/sidekiq.yml -d"
+      execute "cd #{release_path} && bundle exec sidekiq -e #{fetch(:rails_env)} -C config/sidekiq.yml"
     end
   end
 
