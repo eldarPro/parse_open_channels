@@ -6,11 +6,10 @@ ActiveAdmin.register_page "Dashboard" do
     columns do
       column do
         panel "Parsing Logs" do
-          table_for ParsingLog.last(24) do
+          table_for ParsingLog.last(24).order('id DESC') do
             column("Start date") { |i| i.start_date }
             column("End date") { |i| i.end_date }
             column("Run count rows") { |i| i.count_rows }
-            column("Completed count rows") { |i| i.complete_count_rows }
           end
         end
         if ParsingLog.count > 0
@@ -20,12 +19,5 @@ ActiveAdmin.register_page "Dashboard" do
         end
       end
     end
-
-    #   column do
-    #     panel "Info" do
-    #       para "Welcome to ActiveAdmin."
-    #     end
-    #   end
-    # end
-  end # content
+  end
 end
