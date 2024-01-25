@@ -30,15 +30,43 @@ class WebParser
       thread2.join
 
       result_parse_posts = thread1.value
+      posts              = result_parse_posts[0] rescue []
+      parse_mode         = result_parse_posts[1] rescue :by_web_parse
+      
       channels = thread2.value
     else
-      result_parse_posts = parse_posts(before_post_id)
+      posts    = parse_posts(before_post_id)[0] rescue []
       channels = []
     end
 
-    parse_mode     = result_parse_posts[0] rescue :by_web_parse
-    last_post_id   = result_parse_posts[1] rescue nil
-    last_post_date = result_parse_posts[2] rescue nil
+    if posts.present? 
+      # Если изменилась структура скелета, то бьет тревогу
+      if posts == CHANGE_STRUCT
+        SendAlertMessage.new('Изменилась структура постов парсинга').call 
+        return
+      end
+
+      present_old_7day_post = false
+
+      posts.each do |post_data| 
+        present_old_7day_post = true and next if post_data[6] < 7.days.ago # published_at < 7.days.ago
+        Redis0.rpush('posts_data', post_data.to_json)
+      end
+
+      # Добавляет просмотры постов в массив для дальнейшей обработки
+      # количества среднего просмотра у канала
+      add_post_views_to_storage(posts)
+
+      current_count_posts = count_posts + posts.length
+
+      # А если еще нет поста страше 7-ми дней, то идет парсинг следующей страницы
+      # с подачей номера поста от которого надо исходить, чтобы найти предыдущие посты
+      return if present_old_7day_post || current_count_posts > 70
+      ParseChannelWorker.perform_async(channel_id, channel_name, posts.first[1], current_count_posts) 
+    end
+
+    last_post_id   = posts.last[1] rescue nil
+    last_post_date = posts.last[6] rescue nil
 
     #========= КАНАЛЫ ===============
     return unless channels.present?
@@ -72,36 +100,38 @@ class WebParser
       end
     end
 
-    if posts.present? 
-      # Если изменилась структура скелета, то бьет тревогу
-      if posts == CHANGE_STRUCT
-        SendAlertMessage.new('Изменилась структура постов парсинга').call 
-        return
-      end
+    # if posts.present? 
+    #   # Если изменилась структура скелета, то бьет тревогу
+    #   if posts == CHANGE_STRUCT
+    #     SendAlertMessage.new('Изменилась структура постов парсинга').call 
+    #     return
+    #   end
 
-      present_old_7day_post = false
+    #   present_old_7day_post = false
 
-      posts.each do |post_data| 
-        present_old_7day_post = true and next if post_data[6] < 7.days.ago # published_at < 7.days.ago
-        Redis0.rpush('posts_data', post_data.to_json)
-      end
+    #   posts.each do |post_data| 
+    #     present_old_7day_post = true and next if post_data[6] < 7.days.ago # published_at < 7.days.ago
+    #     Redis0.rpush('posts_data', post_data.to_json)
+    #   end
 
-      # Добавляет просмотры постов в массив для дальнейшей обработки
-      # количества среднего просмотра у канала
-      add_post_views_to_storage(posts)
+    #   # Добавляет просмотры постов в массив для дальнейшей обработки
+    #   # количества среднего просмотра у канала
+    #   add_post_views_to_storage(posts)
 
-      current_count_posts = count_posts + posts.length
+    #   current_count_posts = count_posts + posts.length
 
-      # А если еще нет поста страше 7-ми дней, то идет парсинг следующей страницы
-      # с подачей номера поста от которого надо исходить, чтобы найти предыдущие посты
-      return if present_old_7day_post || current_count_posts > 70
-      ParseChannelWorker.perform_async(channel_id, channel_name, posts.first[1], current_count_posts) 
-    end
+    #   # А если еще нет поста страше 7-ми дней, то идет парсинг следующей страницы
+    #   # с подачей номера поста от которого надо исходить, чтобы найти предыдущие посты
+    #   return if present_old_7day_post || current_count_posts > 70
+    #   ParseChannelWorker.perform_async(channel_id, channel_name, posts.first[1], current_count_posts) 
+    # end
 
-    last_post_id   = posts.last[1] rescue nil
-    last_post_date = posts.last[6] rescue nil
+    # last_post_id   = posts.last[1] rescue nil
+    # last_post_date = posts.last[6] rescue nil
 
-    [parse_mode, last_post_id, last_post_date]
+    # [parse_mode, last_post_id, last_post_date]
+
+    [posts, parse_mode]
   end
 
   def parse_channels
