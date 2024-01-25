@@ -5,11 +5,11 @@ class SchedulerParseChannelWorker
 
   def perform
 
-    parse_count = Channel.select(:id, :name).limit(70_000).count
+    parse_count = Channel.select(:id, :name).count
 
     ParsingLog.start(parse_count)
 
-    Channel.select(:id, :name).limit(70_000).find_each(batch_size: 10_000) do |channel|
+    Channel.select(:id, :name).all.find_each(batch_size: 10_000) do |channel|
       ParseChannelWorker.perform_async(channel.id, channel.name)
     end
   end
