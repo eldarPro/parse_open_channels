@@ -3,7 +3,7 @@
 development:
   :concurrency: 180
 production:
-  :concurrency: 500
+  :concurrency: 1000
 :queues:
   - critical
   - default
