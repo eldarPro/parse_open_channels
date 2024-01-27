@@ -2,17 +2,17 @@ parsing_logs_worker:
   cron: "/3 * * * *"
   class: "ParsingLogsWorker"
   queue: default
-# scheduler_parse_channel_workers:
-#   cron: "0 * * * *"
-#   class: "SchedulerParseChannelWorker"
-#   queue: job_scheduler
-# update_channel_info_workers:
-#   cron: "50 * * * *"
-#   class: "UpdateChannelsWorker"
-#   queue: critical
-# upsert_post_views_workers:
-#   cron: "*/1 * * * *"
-#   class: "UpsertPostsWorker"
-#   queue: critical
+scheduler_parse_channel_workers:
+  cron: "0 * * * *"
+  class: "SchedulerParseChannelWorker"
+  queue: job_scheduler
+update_channel_info_workers:
+  cron: "50 * * * *"
+  class: "UpdateChannelsWorker"
+  queue: critical
+upsert_post_views_workers:
+  cron: "*/1 * * * *"
+  class: "UpsertPostsWorker"
+  queue: critical
 
 

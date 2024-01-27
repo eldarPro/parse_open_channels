@@ -2,7 +2,7 @@
 lock "~> 3.18.0"
 
 set :application, "parse"
-set :repo_url, "git@gitlab.telega.in:telega-stat/parse_open_channel.git"
+set :repo_url, "git@github.com:eldarPro/parse_open_channels.git"
 set :branch, "main"
 
 
