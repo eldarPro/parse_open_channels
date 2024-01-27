@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_01_22_065253) do
+ActiveRecord::Schema[7.0].define(version: 2024_01_27_154615) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -99,7 +99,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_22_065253) do
 
   create_table "parsing_logs", force: :cascade do |t|
     t.integer "count_rows", default: 0, null: false
-    t.integer "complete_count_rows", default: 0, null: false
     t.datetime "start_date"
     t.datetime "end_date"
     t.datetime "created_at", null: false

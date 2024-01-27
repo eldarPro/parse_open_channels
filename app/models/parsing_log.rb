@@ -15,7 +15,7 @@ class ParsingLog < ApplicationRecord
   end
 
   def self.ransackable_attributes(auth_object = nil)
-    ["complete_count_rows", "count_rows", "created_at", "end_date", "id", "start_date", "updated_at"]
+    ["count_rows", "created_at", "end_date", "id", "start_date", "updated_at"]
   end
 
 end

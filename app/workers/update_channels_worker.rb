@@ -23,9 +23,6 @@ class UpdateChannelsWorker
         title       = val[2]
         description = val[3]
 
-        post_views    = Redis0.lrange("post_views:#{channel_id}:#{Time.now.strftime('%d_%H')}", 0, -1)
-        average_views = post_views.map(&:to_i).reject(&:zero?)&.inject(&:+)&.fdiv(post_views.length).to_i
-
         update_values << "(#{[ActiveRecord::Base.connection.quote(channel_id),
            ActiveRecord::Base.connection.quote(subscribers),
            ActiveRecord::Base.connection.quote(title),
@@ -35,12 +32,10 @@ class UpdateChannelsWorker
            ActiveRecord::Base.connection.quote((val[6] == 'by_web_parse')),
            ActiveRecord::Base.connection.quote((val[6] == 'by_telethon_parse')),
            ActiveRecord::Base.connection.quote(val[7]),
-           ActiveRecord::Base.connection.quote(val[8]),
-           ActiveRecord::Base.connection.quote(average_views),
+           ActiveRecord::Base.connection.quote(val[8])
          ].join(', ')})"
 
-        insert_values << { channel_id: channel_id, subscribers: subscribers, title: title, 
-                           description: description, average_views: average_views }
+        insert_values << { channel_id: channel_id, subscribers: subscribers, title: title, description: description }
       end
 
       ActiveRecord::Base.connection.execute("UPDATE channels AS c SET 
@@ -52,11 +47,10 @@ class UpdateChannelsWorker
           by_web_parse = d.by_web_parse,
           by_telethon_parse = d.by_telethon_parse,
           last_post_id = d.last_post_id,
-          last_post_date = CAST(d.last_post_date AS TIMESTAMP WITH TIME ZONE),
-          average_views = d.average_views
+          last_post_date = CAST(d.last_post_date AS TIMESTAMP WITH TIME ZONE)
         FROM (VALUES #{update_values.join(', ')}) AS 
         d(id, subscribers, title, description, is_verify, update_info_at, by_web_parse, 
-        by_telethon_parse, last_post_id, last_post_date, average_views)
+        by_telethon_parse, last_post_id, last_post_date)
         where c.id = d.id;")
 
       ChannelStat.insert_all(insert_values)

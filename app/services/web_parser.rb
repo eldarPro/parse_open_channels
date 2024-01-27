@@ -53,23 +53,21 @@ class WebParser
         Redis0.rpush('posts_data', post_data.to_json)
       end
 
-      # Добавляет просмотры постов в массив для дальнейшей обработки
-      # количества среднего просмотра у канала
-      add_post_views_to_storage(posts)
-
       current_count_posts = count_posts + posts.length
 
       # А если еще нет поста страше 7-ми дней, то идет парсинг следующей страницы
       # с подачей номера поста от которого надо исходить, чтобы найти предыдущие посты
-      return if present_old_7day_post || current_count_posts > 70
-      ParseChannelWorker.perform_async(channel_id, channel_name, posts.first[1], current_count_posts) 
+      if !present_old_7day_post && current_count_posts < 70
+        ParseChannelWorker.perform_async(channel_id, channel_name, posts.first[1], current_count_posts) 
+      end
     end
+
+    #========= КАНАЛЫ ===============
+    return if !first_page_parse || channels.blank?
 
     last_post_id   = posts.last[1] rescue nil
     last_post_date = posts.last[6] rescue nil
 
-    #========= КАНАЛЫ ===============
-    return unless channels.present?
     channels << parse_mode
     channels << last_post_id
     channels << last_post_date
@@ -100,37 +98,6 @@ class WebParser
       end
     end
 
-    # if posts.present? 
-    #   # Если изменилась структура скелета, то бьет тревогу
-    #   if posts == CHANGE_STRUCT
-    #     SendAlertMessage.new('Изменилась структура постов парсинга').call 
-    #     return
-    #   end
-
-    #   present_old_7day_post = false
-
-    #   posts.each do |post_data| 
-    #     present_old_7day_post = true and next if post_data[6] < 7.days.ago # published_at < 7.days.ago
-    #     Redis0.rpush('posts_data', post_data.to_json)
-    #   end
-
-    #   # Добавляет просмотры постов в массив для дальнейшей обработки
-    #   # количества среднего просмотра у канала
-    #   add_post_views_to_storage(posts)
-
-    #   current_count_posts = count_posts + posts.length
-
-    #   # А если еще нет поста страше 7-ми дней, то идет парсинг следующей страницы
-    #   # с подачей номера поста от которого надо исходить, чтобы найти предыдущие посты
-    #   return if present_old_7day_post || current_count_posts > 70
-    #   ParseChannelWorker.perform_async(channel_id, channel_name, posts.first[1], current_count_posts) 
-    # end
-
-    # last_post_id   = posts.last[1] rescue nil
-    # last_post_date = posts.last[6] rescue nil
-
-    # [parse_mode, last_post_id, last_post_date]
-
     [posts, parse_mode]
   end
 
@@ -154,15 +121,6 @@ class WebParser
     #end
 
     [channel_id, subscribers, title, description, is_verify, update_info_at]
-  end
-
-  # Добавляет просмотры постов в массив для дальнейшей обработки
-  # количества среднего просмотра у канала
-  def add_post_views_to_storage(posts)
-    post_views = posts.map{ _1[2] }
-    return unless post_views.present?
-    Redis0.rpush(post_views_key, post_views) 
-    Redis0.expire(post_views_key, 1.hour) if first_page_parse
   end
 
   def add_other_data_to_post_data(post_data)
