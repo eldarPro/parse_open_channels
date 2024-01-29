@@ -1,7 +1,7 @@
 # Планировщик парсинга каналов
 class SchedulerParseChannelWorker
   include Sidekiq::Worker
-  sidekiq_options queue: :job_scheduler, retry: 0
+  sidekiq_options queue: :critical, retry: 0
 
   def perform
 

@@ -3,8 +3,7 @@
 development:
   :concurrency: 120
 production:
-  :concurrency: 220
+  :concurrency: 120
 :queues:
   - critical
   - default
-  - job_scheduler
