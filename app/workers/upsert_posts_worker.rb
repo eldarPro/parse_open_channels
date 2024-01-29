@@ -5,10 +5,10 @@ class UpsertPostsWorker
 
   def perform 
     # Обновление по 10к штук
-    count_batch = (Redis0.llen('posts_data') / 10000.to_f).ceil
+    count_batch = (Redis0.llen('posts_data') / 3000.to_f).ceil
 
     count_batch.times do
-      values = Redis0.lrange('posts_data', 0, 9999)
+      values = Redis0.lrange('posts_data', 0, 2999)
 
       break unless values.present?
 
@@ -35,7 +35,7 @@ class UpsertPostsWorker
          NOW())"
       end.join(', ')
 
-      ActiveRecord::Base.connection.execute("INSERT INTO posts AS p
+      MainDbRecord.connection.execute("INSERT INTO posts AS p
         (link, tg_id, views, links, statistic, has_photo, has_video, published_at, next_post_at, html, is_repost, channel_id, skip_screen, feed_hours, top_hours, last_parsed_at, created_at, updated_at)
         VALUES #{upsert_values} ON CONFLICT (link) DO UPDATE
         SET views = EXCLUDED.views, 
@@ -51,7 +51,7 @@ class UpsertPostsWorker
         statistic = jsonb_insert(p.statistic, '{-1}', jsonb_build_object('views', (EXCLUDED.views::int - COALESCE(p.views, 0)::int), 'updated_at', EXCLUDED.last_parsed_at), true)
       ")
 
-      Redis0.ltrim('posts_data', 10000, -1)
+      Redis0.ltrim('posts_data', 3000, -1)
     end
 
   end

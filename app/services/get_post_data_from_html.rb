@@ -23,7 +23,7 @@ class GetPostDataFromHtml
     has_video = post_html.css(".message_video_play").present?
 
     published_at = post_html.css(".tgme_widget_message_date time").attr('datetime').value.to_datetime rescue nil
-    return WebParser::CHANGE_STRUCT if published_at.nil?
+    return WebParser::CHANGE_STRUCT if published_at.blank?
 
     next_post_at = get_next_post_at(tg_post_id)
     html         = post_html.css(".js-message_text").to_html

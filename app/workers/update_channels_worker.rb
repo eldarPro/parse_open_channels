@@ -38,7 +38,7 @@ class UpdateChannelsWorker
         insert_values << { channel_id: channel_id, subscribers: subscribers, title: title, description: description }
       end
 
-      ActiveRecord::Base.connection.execute("UPDATE channels AS c SET 
+      MainDbRecord.connection.execute("UPDATE channels AS c SET 
           subscribers = d.subscribers,
           title = d.title,
           description = d.description,
@@ -46,8 +46,8 @@ class UpdateChannelsWorker
           update_info_at = CAST(d.update_info_at AS TIMESTAMP WITH TIME ZONE),
           by_web_parse = d.by_web_parse,
           by_telethon_parse = d.by_telethon_parse,
-          last_post_id = d.last_post_id,
-          last_post_date = CAST(d.last_post_date AS TIMESTAMP WITH TIME ZONE)
+          last_post_id = CASE WHEN d.last_post_id IS NOT NULL THEN CAST(d.last_post_id AS INTEGER) ELSE c.last_post_id END,
+          last_post_date = CASE WHEN d.last_post_date IS NOT NULL THEN CAST(d.last_post_date AS TIMESTAMP WITH TIME ZONE) ELSE c.last_post_date END
         FROM (VALUES #{update_values.join(', ')}) AS 
         d(id, subscribers, title, description, is_verify, update_info_at, by_web_parse, 
         by_telethon_parse, last_post_id, last_post_date)
