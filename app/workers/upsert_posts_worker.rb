@@ -5,10 +5,12 @@ class UpsertPostsWorker
 
   def perform 
     # Обновление по 10к штук
-    count_batch = (Redis0.llen('posts_data') / 1000.0).ceil
+    count_batch = (Redis0.llen('posts_data') / 10000.to_f).ceil
 
     count_batch.times do
-      values = Redis0.lrange('posts_data', 0, 999)
+      values = Redis0.lrange('posts_data', 0, 9999)
+
+      break unless values.present?
 
       values = values.map{ JSON.parse(_1) }.uniq{ _1[0] }
 
@@ -49,7 +51,7 @@ class UpsertPostsWorker
         statistic = jsonb_insert(p.statistic, '{-1}', jsonb_build_object('views', (EXCLUDED.views::int - COALESCE(p.views, 0)::int), 'updated_at', EXCLUDED.last_parsed_at), true)
       ")
 
-      Redis0.ltrim('posts_data', 1000, -1)
+      Redis0.ltrim('posts_data', 10000, -1)
     end
 
   end

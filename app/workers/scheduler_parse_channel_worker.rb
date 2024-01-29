@@ -4,8 +4,7 @@ class SchedulerParseChannelWorker
   sidekiq_options queue: :critical, retry: 0
 
   def perform
-
-    parse_count = Channel.select(:id, :name).count
+    parse_count = Channel.count
 
     ParsingLog.start(parse_count)
 
