@@ -3,7 +3,7 @@ parsing_logs_worker:
   class: "ParsingLogsWorker"
   queue: default
 scheduler_parse_channel_workers:
-  cron: "0 * * * *"
+  cron: "40 * * * *"
   class: "SchedulerParseChannelWorker"
   queue: critical
 update_channel_info_workers:
