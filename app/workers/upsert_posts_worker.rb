@@ -35,7 +35,7 @@ class UpsertPostsWorker
          NOW())"
       end.join(', ')
 
-      MainDbRecord.connection.execute("INSERT INTO posts AS p
+      MainDbRecord.connection.execute("INSERT INTO posts_2024_1 AS p
         (link, tg_id, views, links, statistic, has_photo, has_video, published_at, next_post_at, html, is_repost, channel_id, skip_screen, feed_hours, top_hours, last_parsed_at, created_at, updated_at)
         VALUES #{upsert_values} ON CONFLICT (link) DO UPDATE
         SET views = EXCLUDED.views, 

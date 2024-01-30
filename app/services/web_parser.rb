@@ -52,7 +52,12 @@ class WebParser
 
       posts.each do |post_data| 
         present_old_7day_post = true and next if post_data[6] < 7.days.ago # published_at < 7.days.ago
-        Redis0.rpush('posts_data', post_data.to_json)
+
+        if last_post_id.present? && post_data[1] <= last_post_id
+          Redis0.rpush('update_posts_data', post_data.to_json)
+        else
+          Redis0.rpush('create_posts_data', post_data.to_json)
+        end
       end
 
       current_count_posts = count_posts + posts.length
