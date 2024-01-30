@@ -2,6 +2,7 @@ class WebParser
 
   attr_accessor :channel_id
   attr_accessor :channel_name
+  attr_accessor :last_post_id
   attr_accessor :before_post_id
   attr_accessor :first_page_parse
   attr_accessor :post_views_key
@@ -9,9 +10,10 @@ class WebParser
 
   CHANGE_STRUCT = 'change_struct'
 
-  def initialize(channel_id, channel_name, before_post_id = nil, count_posts = 0)
+  def initialize(channel_id, channel_name, last_post_id, before_post_id = nil, count_posts = 0)
     @channel_id       = channel_id
     @channel_name     = channel_name
+    @last_post_id     = last_post_id
     @before_post_id   = before_post_id
     @first_page_parse = before_post_id.nil?
     @post_views_key   = "post_views:#{channel_id}:#{Time.now.strftime('%d_%H')}"
@@ -50,7 +52,12 @@ class WebParser
 
       posts.each do |post_data| 
         present_old_7day_post = true and next if post_data[6] < 7.days.ago # published_at < 7.days.ago
-        Redis0.rpush('posts_data', post_data.to_json)
+
+        if last_post_id.present? && post_data[1] <= last_post_id
+          Redis0.rpush('update_posts_data', post_data.to_json)
+        else
+          Redis0.rpush('create_posts_data', post_data.to_json)
+        end
       end
 
       current_count_posts = count_posts + posts.length
@@ -58,7 +65,7 @@ class WebParser
       # А если еще нет поста страше 7-ми дней, то идет парсинг следующей страницы
       # с подачей номера поста от которого надо исходить, чтобы найти предыдущие посты
       if !present_old_7day_post && current_count_posts < 70
-        ParseChannelWorker.perform_async(channel_id, channel_name, posts.first[1], current_count_posts) 
+        ParseChannelWorker.perform_async(channel_id, channel_name, last_post_id, posts.first[1], current_count_posts) 
       end
     end
 

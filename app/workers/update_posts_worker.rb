@@ -1,0 +1,57 @@
+# Планировщик обновления постов в БД
+class UpdatePostsWorker
+  include Sidekiq::Worker
+  sidekiq_options queue: :critical, retry: 0
+
+  def perform 
+    # Обновление по 10к штук
+    count_batch = (Redis0.llen('update_posts_data') / 3000.to_f).ceil
+
+    count_batch.times do
+      values = Redis0.lrange('update_posts_data', 0, 2999)
+
+      break unless values.present?
+
+      values = values.map{ JSON.parse(_1) }.uniq{ _1[0] }
+
+      update_values = values.map do |val| 
+        "(#{[ActiveRecord::Base.connection.quote(val[0]),
+         ActiveRecord::Base.connection.quote(val[1]),
+         ActiveRecord::Base.connection.quote(val[2]),
+         "#{ActiveRecord::Base.connection.quote(val[3].to_json)}",
+         "#{ActiveRecord::Base.connection.quote([{views: val[2], updated_at: val[-1]}].to_json)}",
+         ActiveRecord::Base.connection.quote(val[4]),
+         ActiveRecord::Base.connection.quote(val[5]),
+         ActiveRecord::Base.connection.quote(val[6]),
+         ActiveRecord::Base.connection.quote(val[7]),
+         ActiveRecord::Base.connection.quote(val[8]),
+         ActiveRecord::Base.connection.quote(val[9]),
+         ActiveRecord::Base.connection.quote(val[10]),
+         ActiveRecord::Base.connection.quote('true'),
+         ActiveRecord::Base.connection.quote(val[11]),
+         ActiveRecord::Base.connection.quote(val[12]),
+         ActiveRecord::Base.connection.quote(val[13])].join(', ')}, 
+         NOW(),
+         NOW())"
+      end.join(', ')
+
+      MainDbRecord.connection.execute("UPDATE posts AS p
+        SET views = views, 
+        links = links::jsonb,
+        has_photo = has_photo,
+        has_video = has_video,
+        next_post_at = CAST(next_post_at AS TIMESTAMP WITH TIME ZONE),
+        html = html,
+        is_repost = is_repost,
+        feed_hours = feed_hours,
+        top_hours = top_hours,
+        last_parsed_at = CAST(last_parsed_at AS TIMESTAMP WITH TIME ZONE),
+        statistic = jsonb_insert(p.statistic, '{-1}', jsonb_build_object('views', (views::int - COALESCE(p.views, 0)::int), 'updated_at', last_parsed_at), true)
+        FROM VALUES #{update_values}
+      ")
+
+      Redis0.ltrim('update_posts_data', 3000, -1)
+    end
+
+  end
+end

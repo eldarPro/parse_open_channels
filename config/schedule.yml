@@ -10,9 +10,18 @@ update_channel_info_workers:
   cron: "/5 * * * *"
   class: "UpdateChannelsWorker"
   queue: critical
-upsert_post_views_workers:
+# upsert_post_views_workers:
+#   cron: "*/1 * * * *"
+#   class: "UpsertPostsWorker"
+#   queue: critical
+create_post_views_workers:
   cron: "*/1 * * * *"
-  class: "UpsertPostsWorker"
+  class: "CreatePostsWorker"
   queue: critical
+update_post_views_workers:
+  cron: "*/1 * * * *"
+  class: "UpdatePostsWorker"
+  queue: critical
+
 
 
