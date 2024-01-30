@@ -5,7 +5,7 @@ class UpdateChannelsWorker
 
   def perform 
     data_count  = Redis0.llen('channels_data')
-    count_batch = (data_count / 1000.0).ceil
+    count_batch = (data_count / 1000.to_f).ceil
 
     count_batch.times do
       values = Redis0.lrange('channels_data', 0, 999)
@@ -53,7 +53,7 @@ class UpdateChannelsWorker
         by_telethon_parse, last_post_id, last_post_date)
         where c.id = d.id;")
 
-      ChannelStat.insert_all(insert_values)
+      MainDb::ChannelStat.insert_all(insert_values)
 
       Redis0.ltrim('channels_data', 1000, -1)
     end

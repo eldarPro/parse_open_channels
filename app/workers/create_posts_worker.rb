@@ -5,10 +5,10 @@ class CreatePostsWorker
 
   def perform 
     # Обновление по 10к штук
-    count_batch = (Redis0.llen('create_posts_data') / 3000.to_f).ceil
+    count_batch = (Redis0.llen('create_posts_data') / 1000.to_f).ceil
 
     count_batch.times do
-      values = Redis0.lrange('create_posts_data', 0, 2999)
+      values = Redis0.lrange('create_posts_data', 0, 999)
 
       break unless values.present?
 
@@ -39,7 +39,7 @@ class CreatePostsWorker
         (link, tg_id, views, links, statistic, has_photo, has_video, published_at, next_post_at, html, is_repost, channel_id, skip_screen, feed_hours, top_hours, last_parsed_at, created_at, updated_at)
         VALUES #{create_values}")
 
-      Redis0.ltrim('create_posts_data', 3000, -1)
+      Redis0.ltrim('create_posts_data', 1000, -1)
     end
 
   end
