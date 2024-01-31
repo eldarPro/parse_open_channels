@@ -44,7 +44,7 @@ class UpdatePostsWorker
         statistic = jsonb_insert(p.statistic, '{-1}', jsonb_build_object('views', (d.views::int - COALESCE(p.views, 0)::int), 'updated_at', last_parsed_at), true)
         FROM (VALUES #{update_values}) AS 
         d(link, tg_post_id, views, links, has_photo, has_video, next_post_at, html, is_repost, channel_id, feed_hours, top_hours, parsed_at)
-        WHERE p.channel_id = d.channel_id AND p.tg_id = d.tg_post_id;")
+        WHERE p.link = d.link;")
 
       Redis0.ltrim('update_posts_data', 1000, -1)
     end
