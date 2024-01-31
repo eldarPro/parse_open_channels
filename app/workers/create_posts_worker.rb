@@ -37,7 +37,7 @@ class CreatePostsWorker
 
       MainDbRecord.connection.execute("INSERT INTO posts AS p
         (link, tg_id, views, links, statistic, has_photo, has_video, published_at, next_post_at, html, is_repost, channel_id, skip_screen, feed_hours, top_hours, last_parsed_at, created_at, updated_at)
-        VALUES #{create_values}")
+        VALUES #{create_values} ON CONFLICT DO NOTHING")
 
       Redis0.ltrim('create_posts_data', 1000, -1)
     end
