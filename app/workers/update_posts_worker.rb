@@ -1,11 +1,10 @@
 # Планировщик обновления постов в БД
 class UpdatePostsWorker
   include Sidekiq::Worker
-  sidekiq_options queue: :critical, retry: 0
+  sidekiq_options queue: :critical, retry: 1
 
   def perform 
     active_workers_info = Sidekiq::Workers.new.map(&:last)
-
     return if active_workers_info.find{ |i| i['payload']['class'] == 'UpdatePostsWorker' } rescue nil
 
     # Обновление по 10к штук

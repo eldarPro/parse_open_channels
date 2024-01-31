@@ -1,12 +1,12 @@
 # Планировщик обновления в БД информаций о каналах
 class UpdateChannelsWorker
   include Sidekiq::Worker
-  sidekiq_options queue: :critical, retry: 0
+  sidekiq_options queue: :critical, retry: 1
 
   def perform 
     active_workers_info = Sidekiq::Workers.new.map(&:last)
-    return if active_workers_info.find{ |i| i['payload']['class'] == 'UpdateChannelsWorker' } rescue nil
-    
+    return if active_workers_info.find{ |i| JSON.parse(i['payload'])['class'] == 'UpdateChannelsWorker' }.present? rescue nil
+
     data_count  = Redis0.llen('channels_data')
     count_batch = (data_count / 1000.to_f).ceil
 
