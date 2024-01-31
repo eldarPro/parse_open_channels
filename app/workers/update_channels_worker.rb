@@ -4,6 +4,9 @@ class UpdateChannelsWorker
   sidekiq_options queue: :critical, retry: 0
 
   def perform 
+    active_workers_info = Sidekiq::Workers.new.map(&:last)
+    return if active_workers_info.find{ |i| i['payload']['class'] == 'UpdateChannelsWorker' } rescue nil
+    
     data_count  = Redis0.llen('channels_data')
     count_batch = (data_count / 1000.to_f).ceil
 
