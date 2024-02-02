@@ -8,7 +8,7 @@ class GetPostDataFromHtml
   end
 
   def call
-    link = post_html.attr('data-post')
+    link = post_html.attr('data-post')&.downcase
     return WebParser::CHANGE_STRUCT if link.nil?
 
     tg_post_id = link.split('/').last.to_i
