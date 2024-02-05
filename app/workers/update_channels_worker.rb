@@ -72,25 +72,24 @@ class UpdateChannelsWorker
 
       Redis0.ltrim('channels_data', 1000, -1)
     end
+  end
 
-    private
+  private
 
-    def channel_data_changed?(data, subscribers, title, description, parse_mode)
-      return true if data.blank? 
-      return true if data[0] != subscribers
-      return true if data[1] != title
-      return true if data[2] != description
-      return true if data[3] != parse_mode
-      false
-    end
+  def channel_data_changed?(data, subscribers, title, description, parse_mode)
+    return true if data.blank? 
+    return true if data[0] != subscribers
+    return true if data[1] != title
+    return true if data[2] != description
+    return true if data[3] != parse_mode
+    false
+  end
 
-    def channel_stat_data_changed?(data, subscribers, title, description)
-      return true if data.blank? 
-      return true if data[0] != subscribers
-      return true if data[1] != title
-      return true if data[2] != description
-      false
-    end
-
+  def channel_stat_data_changed?(data, subscribers, title, description)
+    return true if data.blank? 
+    return true if data[0] != subscribers
+    return true if data[1] != title
+    return true if data[2] != description
+    false
   end
 end
