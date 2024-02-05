@@ -7,14 +7,14 @@ scheduler_parse_channel_workers:
   class: "SchedulerParseChannelWorker"
   queue: critical
 update_channel_info_workers:
-  cron: "50 * * * *"
+  cron: "5,16,26,36,46,56 * * * *"
   class: "UpdateChannelsWorker"
   queue: critical
-create_post_views_workers:
-  cron: "1,6,11,16,21,26,31,36,41,46,51,57 * * * *"
+create_posts_workers:
+  cron: "1,11,21,31,41,51,57 * * * *"
   class: "CreatePostsWorker"
   queue: critical
-update_post_views_workers:
+update_posts_workers:
   cron: "3,8,13,18,23,28,33,38,43,48,53,58 * * * *"
   class: "UpdatePostsWorker"
   queue: critical
