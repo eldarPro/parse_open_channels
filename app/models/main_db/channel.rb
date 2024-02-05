@@ -3,7 +3,7 @@ module MainDb
     has_many :posts, dependent: :destroy
     
     def self.opens
-      where.not(by_web_parse: false)
+      where(by_web_parse: [true, nil])
     end
   
   end
