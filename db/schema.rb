@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_01_27_154615) do
+ActiveRecord::Schema[7.0].define(version: 2024_02_05_045411) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -51,6 +51,10 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_27_154615) do
     t.datetime "updated_parse_mode_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "channel_themes", force: :cascade do |t|
+    t.string "title"
   end
 
   create_table "channels", force: :cascade do |t|
@@ -95,6 +99,19 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_27_154615) do
     t.text "description"
     t.integer "average_views"
     t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+  end
+
+  create_table "freelancer_theme_ties", force: :cascade do |t|
+    t.integer "freelancer_id"
+    t.integer "channel_theme_id"
+  end
+
+  create_table "freelancers", force: :cascade do |t|
+    t.string "login"
+    t.string "password"
+    t.integer "complete_count", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "parsing_logs", force: :cascade do |t|
