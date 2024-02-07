@@ -33,6 +33,14 @@ class FreelancerThemeTie < ApplicationRecord
     true
   end
 
+  def self.complete_eq(val)
+    where(complete: (val.to_s == 'true'))
+  end
+
+  def self.ransackable_scopes(_auth_object = nil)
+    [:complete_eq]
+  end
+
   def self.ransackable_associations(auth_object = nil)
     ["channel_theme", "freelancer"]
   end
