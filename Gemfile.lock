@@ -422,6 +422,7 @@ DEPENDENCIES
   faraday-typhoeus
   foreman
   jbuilder
+  jquery-rails
   kaminari
   pg
   puma (~> 5.0)

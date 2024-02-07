@@ -7,7 +7,13 @@ Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Defines the root path route ("/")
-  # root "articles#index"
+  root "freelancers#index"
+
+  get 'auth' => 'freelancers#auth', as: :auth
+  post 'freelancers/check_auth' => 'freelancers#check_auth'
+  get 'freelancers/logout' => 'freelancers#logout'
+  get 'freelancers/update_list' => 'freelancers#update_list'
+  get 'freelancers/set_theme' => 'freelancers#set_theme'
 
   mount Sidekiq::Web => '/jobs'
 end
