@@ -4,6 +4,7 @@ ActiveAdmin.register FreelancerThemeTie do
 	index do
     id_column
     column :freelancer
+    column :channel
     column :channel_theme
     actions
   end
