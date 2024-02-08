@@ -139,7 +139,7 @@ class WebParser
 
     post_data << feed_hours
     post_data << top_hours
-    post_data << Time.now
+    post_data << Time.now.strftime('%d.%m.%Y %H:%M:%S')
     post_data 
   end
 

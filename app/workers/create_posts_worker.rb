@@ -33,7 +33,7 @@ class CreatePostsWorker
          ActiveRecord::Base.connection.quote('true'),
          ActiveRecord::Base.connection.quote(val[11]),
          ActiveRecord::Base.connection.quote(val[12]),
-         ActiveRecord::Base.connection.quote(val[13])].join(', ')}, 
+         ActiveRecord::Base.connection.quote(Time.parse(val[13]))].join(', ')}, 
          NOW(),
          NOW())"
       end.join(', ')

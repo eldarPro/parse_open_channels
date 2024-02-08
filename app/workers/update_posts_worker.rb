@@ -43,8 +43,8 @@ class UpdatePostsWorker
         is_repost = d.is_repost,
         feed_hours = d.feed_hours,
         top_hours = d.top_hours,
-        last_parsed_at = CAST(d.parsed_at AS TIMESTAMP WITH TIME ZONE),
-        statistic = jsonb_insert(p.statistic, '{-1}', jsonb_build_object('views', (d.views::int - COALESCE(p.views, 0)::int), 'updated_at', last_parsed_at), true)
+        last_parsed_at = d.parsed_at::timestamp - INTERVAL '3 hours',
+        statistic = jsonb_insert(p.statistic, '{-1}', jsonb_build_object('views', (d.views::int - COALESCE(p.views, 0)::int), 'updated_at', d.parsed_at), true)
         FROM (VALUES #{update_values}) AS 
         d(link, tg_post_id, views, links, has_photo, has_video, next_post_at, html, is_repost, channel_id, feed_hours, top_hours, parsed_at)
         WHERE p.link = d.link;")
