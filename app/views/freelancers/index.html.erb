@@ -7,9 +7,10 @@
 	<div>
 		<% @lists.each do |item| %>
 			<% link = item.channel.name || item.channel.joinchat %>
+			<% select_class = item.channel_theme_id.present? ? 'border-[2px] border-green-500' : '' %>
 			<div class='flex flex-col md:flex-row lg:flex-row items-center justify-between border-t-2 border-gray-300 py-2'>
 				<a class='text-blue-600 underline' href='https://t.me/<%= link %>' target='_blank'><%= link %></a>
-				<select class='p-3 w-[200px] set_theme mt-[10px] md:mt-0' data-channel_id='<%= item.channel.id %>'>
+				<select class='p-3 w-[200px] set_theme mt-[10px] md:mt-0 <%= select_class %>' data-channel_id='<%= item.channel.id %>'>
 					<option value=''>-- Выберите тему ---</option>
 					<% @themes.each do |t| %>
 						<% if item.channel_theme_id == t.id %>	
