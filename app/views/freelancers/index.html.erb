@@ -2,15 +2,19 @@
 	<div class='text-xl text-[#fff] mr-[20px]'><%= @freelancer.login %></div>
 	<a href='/freelancers/logout' class='text-xl text-[#fff] underline'>Выйти</a>
 </div>
-<div class="flex flex-col justify-center p-4 sm:w-auto md:w-[580px] m-auto">
+<div class="flex flex-col justify-center p-4 sm:w-auto md:w-[700px] m-auto">
 	<div class='text-2xl text-black text-center mb-[15px]'>Выполнено: <span class='comp_row'><%= @count_complete %></span></div>
 	<div>
 		<% @lists.each do |item| %>
 			<% link = item.channel.name || item.channel.joinchat %>
+			<% title = item.channel.title || link %>
 			<% select_class = item.channel_theme_id.present? ? 'border-[2px] border-green-500' : '' %>
 			<div class='flex flex-col md:flex-row lg:flex-row items-center justify-between border-t-2 border-gray-300 py-2'>
-				<a class='text-blue-600 underline' href='https://t.me/<%= link %>' target='_blank'><%= link %></a>
-				<select class='p-3 w-[200px] set_theme mt-[10px] md:mt-0 <%= select_class %>' data-channel_id='<%= item.channel.id %>'>
+				<div class='lg:w-[450px] text-balance text-ellipsis overflow-hidden'>
+					<a class='text-blue-600 underline' href='https://t.me/s/<%= link %>' target='_blank'><%= title %></a>
+					<div><%= item.channel.description %></div>
+				</div>
+				<select class='p-3 w-[100%] md:w-[200px] set_theme mt-[10px] md:mt-0 <%= select_class %>' data-channel_id='<%= item.channel.id %>'>
 					<option value=''>-- Выберите тему ---</option>
 					<% @themes.each do |t| %>
 						<% if item.channel_theme_id == t.id %>	
@@ -24,5 +28,5 @@
 		<% end %>
 	</div>
 
-	<a href='/freelancers/update_list' class='mt-[20px] p-4 text-[#fff] text-xl text-center rounded-lg bg-sky-500 hover:bg-sky-700'>Обновить список</a>
+	<a href='/freelancers/update_list' class='update_list_btn mt-[20px] p-4 text-[#fff] text-xl text-center rounded-lg bg-sky-500 hover:bg-sky-700'>Обновить список</a>
 </div>

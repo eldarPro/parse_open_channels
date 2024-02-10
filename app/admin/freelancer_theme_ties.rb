@@ -15,7 +15,8 @@ ActiveAdmin.register FreelancerThemeTie do
   filter :id
   filter :freelancer_id
   filter :channel_theme_id
-  filter :complete, as: :boolean
+  filter :private_eq, as: :select, collection: ['Yes', 'No']
+  filter :complete, as: :select, collection: ['Yes', 'No']
 
   controller do
     def scoped_collection

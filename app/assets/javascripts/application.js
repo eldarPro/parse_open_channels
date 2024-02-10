@@ -18,4 +18,7 @@ $(document).ready(function(){
 		})
 	})
 
+	$(document).on('click', '.update_list_btn', function(){
+		$(this).addClass('pointer-events-none')
+	})
 })

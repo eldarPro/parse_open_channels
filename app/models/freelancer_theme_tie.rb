@@ -34,11 +34,18 @@ class FreelancerThemeTie < ApplicationRecord
   end
 
   def self.complete_eq(val)
-    where(complete: (val.to_s == 'true'))
+    where(complete: (val.to_s == 'Yes'))
+  end
+
+  def self.private_eq(val)
+    res = self
+    res = joins(:channel).where(channels: { by_telethon_parse: true })   if val == 'Yes'
+    res = joins(:channel).where(channels: { by_web_parse: [true, nil] }) if val == 'No'
+    res
   end
 
   def self.ransackable_scopes(_auth_object = nil)
-    [:complete_eq]
+    [:complete_eq, :private_eq]
   end
 
   def self.ransackable_associations(auth_object = nil)
