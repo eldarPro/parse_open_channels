@@ -14,9 +14,7 @@ class FreelancerThemeTie < ApplicationRecord
     langs << 'en' if freelancer.set_en_lang?
     langs << nil  if freelancer.set_other_lang?
 
-    res = FreelancerThemeTie.joins(:channel).
-                             where(channels: { lang: langs }, complete: false, active: false).
-                             order("RANDOM()").limit(10)
+    res = FreelancerThemeTie.where(lang: langs, complete: false, active: false).order("RANDOM()").limit(10)
     res.update_all(freelancer_id: freelancer_id, active: true)
     res
   end
