@@ -8,22 +8,24 @@
 		<% @lists.each do |item| %>
 			<% link = item.channel.name || item.channel.joinchat %>
 			<% title = item.channel.title || link %>
-			<% select_class = item.channel_theme_id.present? ? 'border-[2px] border-green-500' : '' %>
+			<% select_class = item.channel_theme_id.present? ? 'border-[1px] border-green-500 rounded-[5px]' : '' %>
 			<div class='flex flex-col md:flex-row lg:flex-row items-center justify-between border-t-2 border-gray-300 py-2'>
 				<div class='lg:w-[450px] text-balance text-ellipsis overflow-hidden'>
 					<a class='text-blue-600 underline' href='https://t.me/s/<%= link %>' target='_blank'><%= title %></a>
 					<div><%= item.channel.description %></div>
 				</div>
-				<select class='p-3 w-[100%] md:w-[200px] set_theme mt-[10px] md:mt-0 <%= select_class %>' data-channel_id='<%= item.channel.id %>'>
-					<option value=''>-- Выберите тему ---</option>
-					<% @themes.each do |t| %>
-						<% if item.channel_theme_id == t.id %>	
-							<option value='<%= t.id %>' selected><%= t.title %></option>
-						<% else %>
-							<option value='<%= t.id %>'><%= t.title %></option>
+				<div class='select_block <%= select_class %>'>
+					<select class='select2 p-3 w-[100%] md:w-[200px] set_theme mt-[10px] md:mt-0' data-channel_id='<%= item.channel.id %>'>
+						<option value=''>-- Выберите тему ---</option>
+						<% @themes.each do |t| %>
+							<% if item.channel_theme_id == t.id %>	
+								<option value='<%= t.id %>' selected><%= t.title %></option>
+							<% else %>
+								<option value='<%= t.id %>'><%= t.title %></option>
+							<% end %>
 						<% end %>
-					<% end %>
-				</select>	
+					</select>	
+				</div>
 			</div>
 		<% end %>
 	</div>

@@ -7,7 +7,16 @@ class FreelancerThemeTie < ApplicationRecord
 	validates :channel_id, presence: true
 
   def self.get_fresh_list(freelancer_id)
-    res = FreelancerThemeTie.where(complete: false, active: false).order("RANDOM()").limit(10)
+
+    freelancer = Freelancer.find(freelancer_id)
+    langs = []
+    langs << 'ru' if freelancer.set_ru_lang?
+    langs << 'en' if freelancer.set_en_lang?
+    langs << nil  if freelancer.set_other_lang?
+
+    res = FreelancerThemeTie.joins(:channel).
+                             where(channels: { lang: langs }, complete: false, active: false).
+                             order("RANDOM()").limit(10)
     res.update_all(freelancer_id: freelancer_id, active: true)
     res
   end

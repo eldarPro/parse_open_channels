@@ -1,5 +1,5 @@
-ActiveAdmin.register FreelancerThemeTie do
-	actions :index, :edit
+ActiveAdmin.register FreelancerThemeTie, as: 'FreelancerChannelTheme' do
+	actions :index
   permit_params :freelancer_id, :channel_id, :channel_theme_id, :active, :complete
 
 	index do
@@ -9,7 +9,6 @@ ActiveAdmin.register FreelancerThemeTie do
     column :channel_theme
     column :active
     column :complete
-    actions
   end
 
   filter :id

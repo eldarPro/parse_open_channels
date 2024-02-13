@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_02_07_093532) do
+ActiveRecord::Schema[7.0].define(version: 2024_02_13_112441) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -107,6 +107,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_07_093532) do
     t.boolean "active", default: false
     t.boolean "complete", default: false
     t.integer "channel_id"
+    t.string "lang"
     t.index ["freelancer_id"], name: "index_freelancer_theme_ties_on_freelancer_id"
   end
 
@@ -117,6 +118,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_07_093532) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "note"
+    t.boolean "set_ru_lang", default: true
+    t.boolean "set_en_lang", default: true
+    t.boolean "set_other_lang", default: true
   end
 
   create_table "parsing_logs", force: :cascade do |t|
