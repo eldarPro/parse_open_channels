@@ -109,7 +109,7 @@ class WebParser
 
     doc = SendRequest.new(link, proxy: true).call
 
-    return nil if doc&.css('.tgme_page .tgme_page_extra')&.blank?
+    return nil if doc&.css('.tgme_page_extra')&.blank?
       
     subscribers    = doc.css('.tgme_page_extra').text.gsub(' ', '').to_i
     title          = doc.css(".tgme_page .tgme_page_title span").text
