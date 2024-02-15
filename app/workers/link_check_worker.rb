@@ -9,10 +9,3 @@ class LinkCheckWorker
     Redis0.rpush('empty_link_ids', fr_id)
   end
 end
-
-
-# FreelancerThemeTie.includes(:channel).find_each do |i|
-#   channel = i.channel
-#   link = channel.name || channel.joinchat
-#   LinkCheckWorker.perform_async(i.id, link)
-# end
