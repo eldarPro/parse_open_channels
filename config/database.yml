@@ -17,8 +17,6 @@ main_db:
   password: sLDFKJPjdshsldkj490345hkljshdfsdf#
   host: c-c9q1208ecpqa3d1lue49.rw.mdb.yandexcloud.net
   port: 6432
-  #sslmode: 'verify-full'
-  #sslrootcert: '/yandex_cloud_postgres.crt'
 
 production:
   <<: *default

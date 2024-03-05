@@ -9,3 +9,9 @@ class LinkCheckWorker
     Redis0.rpush('empty_link_ids', fr_id)
   end
 end
+
+
+MainDb::Channel.where('subscribers >= 1000').find_each do |i|
+  link = i.name || i.joinchat
+  LinkCheckWorker.perform_async(i.id, link)
+end

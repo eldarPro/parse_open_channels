@@ -1,4 +1,3 @@
-critical-jobs: RAILS_ENV=production bundle exec sidekiq -q critical -e production
 jobs-1: RAILS_ENV=production bundle exec sidekiq -q default -e production
 jobs-2: RAILS_ENV=production bundle exec sidekiq -q default -e production
 jobs-3: RAILS_ENV=production bundle exec sidekiq -q default -e production
@@ -6,3 +5,8 @@ jobs-4: RAILS_ENV=production bundle exec sidekiq -q default -e production
 jobs-5: RAILS_ENV=production bundle exec sidekiq -q default -e production
 jobs-6: RAILS_ENV=production bundle exec sidekiq -q default -e production
 jobs-7: RAILS_ENV=production bundle exec sidekiq -q default -e production
+jobs-8: RAILS_ENV=production bundle exec sidekiq -q default -e production
+jobs-9: RAILS_ENV=production bundle exec sidekiq -q default -e production
+jobs-10: RAILS_ENV=production bundle exec sidekiq -q default -e production
+jobs-11: RAILS_ENV=production bundle exec sidekiq -q default -e production
+
