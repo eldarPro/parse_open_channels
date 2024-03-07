@@ -3,7 +3,6 @@ class FreelancersController < ApplicationController
 	before_action :authorized, only: [:index, :update_list, :set_theme]
 
 	def index
-		redirect_to root_url and return if session[:freelance_user_id].blank?
 		@freelancer     = Freelancer.find(session[:freelance_user_id])
 		@count_complete = FreelancerThemeTie.count_completed(@freelancer.id)
 		@themes         = ChannelTheme.all

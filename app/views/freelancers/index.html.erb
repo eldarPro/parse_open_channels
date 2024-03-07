@@ -5,7 +5,7 @@
 <div class="flex flex-col justify-center p-4 sm:w-auto md:w-[700px] m-auto">
 	<div class='text-2xl text-black text-center mb-[15px]'>Выполнено: <span class='comp_row'><%= @count_complete %></span></div>
 	<div>
-		<% @lists.each do |item| %>
+		<% [].each do |item| %>
 			<% link = item.channel.name || item.channel.joinchat %>
 			<% title = item.channel.title || link %>
 			<% select_class = item.channel_theme_id.present? ? 'border-[1px] border-green-500 rounded-[5px]' : '' %>
