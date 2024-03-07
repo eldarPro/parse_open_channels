@@ -13,7 +13,7 @@ $(document).ready(function(){
 			$(this).parent('.select_block').removeClass('border-[1px] border-green-500 rounded-[5px]')
 		}
 
-		$.get('freelancers/set_theme', data, function(data) {
+		$.get('/freelancers/set_theme', data, function(data) {
 			if(data.success) $('.comp_row').text(data.count_complete)
 			else alert('Произошла неизвестная ошибка! Повторите еще раз!')
 		})

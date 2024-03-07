@@ -5,7 +5,12 @@ ActiveAdmin.register FreelancerThemeTie, as: 'FreelancerChannelTheme' do
 	index do
     id_column
     column :freelancer
-    column :channel
+    column :channel do |item|
+      if item.channel.present?
+        link = item.channel.name || item.channel.link
+        link_to link, "https://t.me/s/#{link}"
+      end
+    end
     column :channel_theme
     column :active
     column :complete

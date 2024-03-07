@@ -15,7 +15,7 @@
 					<div><%= item.channel.description %></div>
 				</div>
 				<div class='select_block <%= select_class %>'>
-					<select class='select2 p-3 w-[100%] md:w-[200px] set_theme mt-[10px] md:mt-0' data-channel_id='<%= item.channel.id %>'>
+					<select class='select2 p-3 w-[100%] md:w-[250px] set_theme mt-[10px] md:mt-0' data-channel_id='<%= item.channel.id %>'>
 						<option value=''>-- Выберите тему ---</option>
 						<% @themes.each do |t| %>
 							<% if item.channel_theme_id == t.id %>	

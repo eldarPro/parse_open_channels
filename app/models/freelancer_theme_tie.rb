@@ -1,6 +1,6 @@
 class FreelancerThemeTie < ApplicationRecord
 
-	belongs_to :channel, class_name: 'MainDb::Channel'
+	belongs_to :channel #, class_name: 'MainDb::Channel'
 	belongs_to :channel_theme
   belongs_to :freelancer
 
@@ -20,7 +20,7 @@ class FreelancerThemeTie < ApplicationRecord
   end
 
   def self.update_list(freelancer_id)
-    FreelancerThemeTie.where(freelancer_id: freelancer_id, complete: [true, false], active: true).update_all(active: false)
+    FreelancerThemeTie.where(freelancer_id: freelancer_id, active: true).update_all(active: false, freelancer_id: nil)
     get_fresh_list(freelancer_id)
   end
 
@@ -28,17 +28,17 @@ class FreelancerThemeTie < ApplicationRecord
     FreelancerThemeTie.where(freelancer_id: freelancer_id, complete: true).count
   end
 
-  def self.fill_data
-    return false if FreelancerThemeTie.count > 0
+  # def self.fill_data
+  #   return false if FreelancerThemeTie.count > 0
 
-    MainDb::Channel.select(:id).find_in_batches(batch_size: 1000) do |channels|
-      insert_values = []
-      channels.each{ |c| insert_values << { channel_id: c.id } }
-      FreelancerThemeTie.insert_all(insert_values)
-    end
+  #   MainDb::Channel.select(:id).find_in_batches(batch_size: 1000) do |channels|
+  #     insert_values = []
+  #     channels.each{ |c| insert_values << { channel_id: c.id } }
+  #     FreelancerThemeTie.insert_all(insert_values)
+  #   end
 
-    true
-  end
+  #   true
+  # end
 
   def self.complete_eq(val)
     where(complete: (val.to_s == 'Yes'))
