@@ -35,6 +35,7 @@ class FreelancersController < ApplicationController
 
 		if freelancer.present?
 			session[:freelance_user_id] = freelancer.id
+			sleep 2
 			redirect_to root_url
 		else
 			flash[:notice] = 'Неверный логин или пароль'
