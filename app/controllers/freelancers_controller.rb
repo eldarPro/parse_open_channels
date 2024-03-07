@@ -3,6 +3,7 @@ class FreelancersController < ApplicationController
 	before_action :authorized, only: [:index, :update_list, :set_theme]
 
 	def index
+		redirect_to root_url and return if session[:freelance_user_id].blank?
 		@freelancer     = Freelancer.find(session[:freelance_user_id])
 		@count_complete = FreelancerThemeTie.count_completed(@freelancer.id)
 		@themes         = ChannelTheme.all
@@ -35,7 +36,6 @@ class FreelancersController < ApplicationController
 
 		if freelancer.present?
 			session[:freelance_user_id] = freelancer.id
-			sleep 2
 			redirect_to root_url
 		else
 			flash[:notice] = 'Неверный логин или пароль'
