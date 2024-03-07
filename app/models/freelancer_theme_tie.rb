@@ -1,6 +1,6 @@
 class FreelancerThemeTie < ApplicationRecord
 
-	belongs_to :channel #, class_name: 'MainDb::Channel'
+	belongs_to :channel, class_name: 'MainDb::Channel'
 	belongs_to :channel_theme
   belongs_to :freelancer
 
