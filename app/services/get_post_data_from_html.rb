@@ -18,6 +18,7 @@ class GetPostDataFromHtml
     
     links = post_html.css(".js-message_text a").map{_1.attr('href')}.uniq rescue nil
     return WebParser::CHANGE_STRUCT if links.nil?
+    links.sort!
     
     has_photo = post_html.css(".tgme_widget_message_photo_wrap").present?
     has_video = post_html.css(".message_video_play").present?

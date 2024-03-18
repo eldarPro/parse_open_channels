@@ -1,5 +1,5 @@
 module MainDb
-  class Post < MainDbRecord
+  class ChannelPost < MainDbRecord
     self.primary_key = :id
     
     def statistic
