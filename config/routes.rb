@@ -10,7 +10,7 @@ Rails.application.routes.draw do
   root "freelancers#index"
 
   get 'auth' => 'freelancers#auth', as: :auth
-  post 'freelancers/check_auth' => 'freelancers#check_auth'
+  get 'freelancers/check_auth' => 'freelancers#check_auth'
   get 'freelancers/logout' => 'freelancers#logout'
   get 'freelancers/update_list' => 'freelancers#update_list'
   get 'freelancers/set_theme' => 'freelancers#set_theme'

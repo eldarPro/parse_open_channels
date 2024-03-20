@@ -46,15 +46,16 @@ class CreatePostsWorker
 
       posts_data.each do |i|
         # Сollection ChannelPostStat data
-        create_post_stats_values << { channel_post_id: i['id'], views: val[2] } 
+        create_post_stats_values << "(#{[i['id'], ActiveRecord::Base.connection.quote(val[2])].join(', ')}, NOW())" 
         # Сollection ChannelPostInfo data
-        text = TextFromHtml.new(val[8]).call # Берем только текст из html-кода 
-        create_post_infos_values << { channel_post_id: i['id'], text: text, links: val[3] }
+        create_post_infos_values << "(#{[i['id'], ActiveRecord::Base.connection.quote(val[8]), ActiveRecord::Base.connection.quote(val[3].to_json)].join(', ')}, NOW())" 
       end
 
-      MainDb::ChannelPostStat.insert_all(create_post_stats_values) # Create ChannelPostStat
-      MainDb::ChannelPostInfo.insert_all(create_post_infos_values) # Create ChannelPostInfo
-
+      # Create ChannelPostStat
+      MainDbRecord.connection.execute("INSERT INTO channel_post_stats (channel_post_id, views, created_at) VALUES #{create_post_stats_values.join(', ')}")
+      # Create ChannelPostInfo
+      MainDbRecord.connection.execute("INSERT INTO channel_post_infos (channel_post_id, text, links, created_at) VALUES #{create_post_infos_values.join(', ')}")
+    
       Redis0.ltrim('create_posts_data', 1000, -1)
     end
 
