@@ -9,6 +9,10 @@ module MainDb
     def self.active
       where('subscribers >= 2000')
     end
+
+    def link
+
+    end
   
   end
 end

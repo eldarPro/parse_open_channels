@@ -7,7 +7,7 @@ ActiveAdmin.register FreelancerThemeTie, as: 'FreelancerChannelTheme' do
     column :freelancer
     column :channel do |item|
       if item.channel.present?
-        link = item.channel.name || item.channel.link
+        link = item.channel.name || item.channel.joinchat
         link_to link, "https://t.me/s/#{link}"
       end
     end
