@@ -64,7 +64,7 @@ class MovePostsWorker
                                           ActiveRecord::Base.connection.quote(p.created_at)].join(', ')})" 
         end 
 
-        if p.text.length > 0
+        if p.text.present? && p.text.length > 0
           create_post_infos_values << "(#{[channel_post_id, ActiveRecord::Base.connection.quote(p.text), p.text.length,
                                            ActiveRecord::Base.connection.quote_default_expression(p.links, links_column)].join(', ')}, NOW())"   
         end
