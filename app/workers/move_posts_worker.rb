@@ -52,6 +52,8 @@ class MovePostsWorker
         channel_post_id = posts_data.as_json.find{ _1['tg_id'] == p.tg_id && _1['channel_id'] == p.channel_id }['id'] rescue nil
         next if channel_post_id.blank?
 
+        links_column = MainDb::ChannelPostInfo.columns[5]
+
         views = 0
         p.statistic.each do |s|
           next if s[:views].to_i <= 0
@@ -62,7 +64,7 @@ class MovePostsWorker
 
         if p.text.present? && p.text.length > 0
           create_post_infos_values << "(#{[channel_post_id, ActiveRecord::Base.connection.quote(p.text), p.text.length,
-                                           ActiveRecord::Base.connection.quote_default_expression(p.links, 'links'), ActiveRecord::Base.connection.quote(p.created_at)].join(', ')})"   
+                                           ActiveRecord::Base.connection.quote_default_expression(p.links, links_column), ActiveRecord::Base.connection.quote(p.created_at)].join(', ')})"   
         end
       end
 
