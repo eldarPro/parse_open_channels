@@ -73,6 +73,8 @@ class WebParser
   def parse_posts(before_post_id)
     url = "https://t.me/s/#{channel_name}?before=#{before_post_id}"
     doc = SendRequest.new(url).call
+
+    return nil if doc == :failed
     
     by_telethon_parse = true
     posts = []

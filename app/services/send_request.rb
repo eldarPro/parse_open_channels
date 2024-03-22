@@ -11,7 +11,7 @@ class SendRequest
   def call
     http = MainDb::Proxy.http(url, proxy_enable: proxy, type: :https)
     response = http.get(url)
-    return unless response.is_a? Net::HTTPSuccess
+    return :failed unless response.is_a?(Net::HTTPSuccess)
     Nokogiri::HTML.parse(response.body)
   end
 

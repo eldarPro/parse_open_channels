@@ -43,7 +43,7 @@ class MovePostsWorker
         VALUES #{new_post_values.join(', ')} ON CONFLICT DO NOTHING RETURNING id, tg_id, channel_id")
 
       Redis0.set('last_move_post_id', old_posts.last.id)
-      Redis0.set('move_posts_count', (Redis0.get('move_posts_count').to_i + 4000)) 
+      Redis0.set('move_posts_count', (Redis0.get('move_posts_count').to_i + 5000)) 
 
       create_post_infos_values = []
       create_post_stats_values = []
@@ -51,10 +51,6 @@ class MovePostsWorker
       old_posts.each do |p|
         channel_post_id = posts_data.as_json.find{ _1['tg_id'] == p.tg_id && _1['channel_id'] == p.channel_id }['id'] rescue nil
         next if channel_post_id.blank?
-
-        Redis0.rpush('screens_data', [channel_post_id, p.screenshot.to_s].to_json) if p.screenshot.to_s.present?
-
-        links_column = MainDb::ChannelPostInfo.columns[5]
 
         views = 0
         p.statistic.each do |s|
@@ -66,7 +62,7 @@ class MovePostsWorker
 
         if p.text.present? && p.text.length > 0
           create_post_infos_values << "(#{[channel_post_id, ActiveRecord::Base.connection.quote(p.text), p.text.length,
-                                           ActiveRecord::Base.connection.quote_default_expression(p.links, links_column), ActiveRecord::Base.connection.quote(p.created_at)].join(', ')})"   
+                                           ActiveRecord::Base.connection.quote_default_expression(p.links, 'links'), ActiveRecord::Base.connection.quote(p.created_at)].join(', ')})"   
         end
       end
 
