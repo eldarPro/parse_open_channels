@@ -1,21 +1,20 @@
-parsing_logs_worker:
-  cron: "/3 * * * *"
-  class: "ParsingLogsWorker"
-  queue: default
+# parsing_logs_worker:
+#   cron: "/3 * * * *"
+#   class: "ParsingLogsWorker"
+#   queue: default
 # scheduler_parse_channel_workers:
 #   cron: "0 * * * *"
 #   class: "SchedulerParseChannelWorker"
 #   queue: critical
-update_channel_info_workers:
-  cron: "5,16,26,36,46,56 * * * *"
-  class: "UpdateChannelsWorker"
-  queue: critical
-create_posts_workers:
-  cron: "1,11,21,31,41,51,57 * * * *"
-  class: "CreatePostsWorker"
-  queue: critical
-update_posts_workers:
-  cron: "3,8,13,18,23,28,33,38,43,48,53,58 * * * *"
-  class: "UpdatePostsWorker"
-  queue: critical
-
+# update_channel_info_workers:
+#   cron: "/7 * * * *"
+#   class: "UpdateChannelsWorker"
+#   queue: critical
+# upsert_posts_workers:
+#   cron: "/3 * * * *"
+#   class: "UpsertPostsWorker"
+#   queue: critical
+move_posts_worker:
+  cron: "*/3 * * * *"
+  class: "MovePostsWorker"
+  queue: default

@@ -4,10 +4,9 @@ class CreatePostsWorker
   sidekiq_options queue: :critical, retry: 1
 
   def perform 
-    active_workers_info = Sidekiq::Workers.new.map(&:last)
-    return if active_workers_info.find{ |i| JSON.parse(i['payload'])['class'] == 'CreatePostsWorker' }.present? rescue nil
-
-    # Обновление по 10к штук
+    return if ActiveWorkers.new(self.class.to_s).is_active?
+    
+    # Обновление по 1000 штук
     count_batch = (Redis0.llen('create_posts_data') / 1000.to_f).ceil
 
     count_batch.times do

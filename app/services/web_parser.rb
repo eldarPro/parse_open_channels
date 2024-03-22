@@ -10,7 +10,7 @@ class WebParser
 
   CHANGE_STRUCT = 'change_struct'
 
-  def initialize(channel_id, channel_name, last_post_id, before_post_id = nil, count_posts = 0)
+  def initialize(channel_id, channel_name, last_post_id = nil, before_post_id = nil, count_posts = 0)
     @channel_id       = channel_id
     @channel_name     = channel_name
     @last_post_id     = last_post_id
@@ -33,7 +33,7 @@ class WebParser
 
       result_parse_posts = thread1.value
       posts              = result_parse_posts[0] rescue []
-      parse_mode         = result_parse_posts[1] rescue :by_web_parse
+      by_telethon_parse  = result_parse_posts[1] rescue false
       
       channels = thread2.value
     else
@@ -43,26 +43,17 @@ class WebParser
 
     if posts.present? 
       # Если изменилась структура скелета, то бьет тревогу
-      if posts == CHANGE_STRUCT
-        SendAlertMessage.new('Изменилась структура постов парсинга').call 
-        return
-      end
-
+      SendAlertMessage.new(:change_post_struct).call and return if posts == CHANGE_STRUCT
+      
       present_old_7day_post = false
-
       posts.each do |post_data| 
         present_old_7day_post = true and next if post_data[6] < 7.days.ago # published_at < 7.days.ago
-        store_key = last_post_id.present? && last_post_id >= post_data[1] ? 'update_posts_data' : 'create_posts_data'
-        Redis0.rpush(store_key, post_data.to_json)
+        Redis0.rpush('post_data', post_data.to_json)
       end
-
       current_count_posts = count_posts + posts.length
-
-      # А если еще нет поста страше 7-ми дней, то идет парсинг следующей страницы
-      # с подачей номера поста от которого надо исходить, чтобы найти предыдущие посты
-      if !present_old_7day_post && current_count_posts < 70
-        ParseChannelWorker.perform_async(channel_id, channel_name, last_post_id, posts.first[1], current_count_posts) 
-      end
+      return if present_old_7day_post     # Остановка если уже есть пост страше 7-дней
+      return if current_count_posts >= 70 # Остановка если уже набралась 70 постов
+      ParseChannelWorker.perform_async(channel_id, channel_name, last_post_id, posts.first[1], current_count_posts) 
     end
 
     #========= КАНАЛЫ ===============
@@ -71,7 +62,7 @@ class WebParser
     last_post_id   = posts.last[1] rescue nil
     last_post_date = posts.last[6] rescue nil
 
-    channels << parse_mode
+    channels << by_telethon_parse
     channels << last_post_id
     channels << last_post_date
     Redis0.rpush('channels_data', channels.to_json)
@@ -83,11 +74,11 @@ class WebParser
     url = "https://t.me/s/#{channel_name}?before=#{before_post_id}"
     doc = SendRequest.new(url).call
     
-    parse_mode = :by_telethon_parse
-    posts      = []
+    by_telethon_parse = true
+    posts = []
 
     if doc&.css(".tgme_widget_message").present?
-      parse_mode = :by_web_parse
+      by_telethon_parse = false
       doc.css(".tgme_widget_message").each.with_index do |post_html, inx|
         post_id = post_html.attr('data-post')&.split('/')&.last&.to_i
         next if post_id.nil? || post_id == 1 # Если id отсутствует или это первый пост (дата добавления), то пропускает
@@ -101,7 +92,7 @@ class WebParser
       end
     end
 
-    [posts, parse_mode]
+    [posts, by_telethon_parse]
   end
 
   def parse_channels

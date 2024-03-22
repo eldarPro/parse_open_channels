@@ -8,8 +8,8 @@ class SchedulerParseChannelWorker
 
     ParsingLog.start(parse_count)
 
-    MainDb::Channel.select(:id, :name, :last_post_id).opens.active.find_each(batch_size: 10_000) do |channel|
-      ParseChannelWorker.perform_async(channel.id, channel.name, channel.last_post_id)
+    MainDb::Channel.select(:id, :name).opens.active.find_each(batch_size: 10_000) do |channel|
+      ParseChannelWorker.perform_async(channel.id, channel.name)
     end
   end
 end

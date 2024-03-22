@@ -4,8 +4,7 @@ class UpdatePostsWorker
   sidekiq_options queue: :critical, retry: 1
 
   def perform 
-    active_workers_info = Sidekiq::Workers.new.map(&:last)
-    return if active_workers_info.find{ |i| i['payload']['class'] == 'UpdatePostsWorker' } rescue nil
+    return if ActiveWorkers.new(self.class.to_s).is_active?
 
     # Обновление по 10к штук
     count_batch = (Redis0.llen('update_posts_data') / 1000.to_f).ceil
