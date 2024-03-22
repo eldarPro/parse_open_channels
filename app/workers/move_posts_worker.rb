@@ -1,6 +1,5 @@
 class MovePostsWorker
-  include Sidekiq::Worker
-  include Sidekiq::Status::Worker
+  include Sidekiq::Job
   sidekiq_options queue: :default, retry: 0
 
   def perform
