@@ -7,7 +7,7 @@ class MovePostsWorker
 
     last_move_post_id = Redis0.get('last_move_post_id').to_i
 
-    Post.where(campaign: true).where('id > ?', last_move_post_id).find_in_batches(batch_size: 1000) do |old_posts|
+    MainDb::Post.where(campaign: true).where('id > ?', last_move_post_id).find_in_batches(batch_size: 1000) do |old_posts|
       old_posts.each do |p|
 
         next if p.channel_id.blank? || p.tg_id.blank?
@@ -35,7 +35,7 @@ class MovePostsWorker
          ActiveRecord::Base.connection.quote(p.updated_at)].join(', ')})"
       end
         
-      posts_data = ActiveRecord::Base.connection.execute("INSERT INTO channel_posts
+      posts_data = MainDbRecord.connection.execute("INSERT INTO channel_posts
         (channel_id, order_channel_id, tg_id, link, kind, views, has_photo, has_video, top_hours, feed_hours, published_at, deleted_at, next_post_at, skip_screen, has_external_links, is_repost, 
         last_parsed_at, is_checked_clicks, campaign, created_at, updated_at)
         VALUES #{new_post_values.join(', ')} ON CONFLICT DO NOTHING RETURNING id, tg_id, channel_id")
@@ -52,7 +52,7 @@ class MovePostsWorker
 
         Redis0.rpush('screens_data', [channel_post_id, p.screenshot.to_s].to_json) if p.screenshot.to_s.present?
 
-        links_column = ChannelPostInfo.columns[5]
+        links_column = MainDb::ChannelPostInfo.columns[5]
 
         views = 0
         p.statistic.each do |s|
@@ -68,10 +68,10 @@ class MovePostsWorker
         end
       end
 
-      ActiveRecord::Base.connection.execute("INSERT INTO channel_post_stats (channel_post_id, views, created_at) 
+      MainDbRecord.connection.execute("INSERT INTO channel_post_stats (channel_post_id, views, created_at) 
         VALUES #{create_post_stats_values.join(', ')} ON CONFLICT (channel_post_id, views) DO NOTHING;") if create_post_stats_values.present?
 
-      ActiveRecord::Base.connection.execute("INSERT INTO channel_post_infos (channel_post_id, text, text_length, links, created_at) 
+      MainDbRecord.connection.execute("INSERT INTO channel_post_infos (channel_post_id, text, text_length, links, created_at) 
         VALUES #{create_post_infos_values.join(', ')} ON CONFLICT (channel_post_id, text_length) DO NOTHING;") if create_post_infos_values.present?
 
     end
