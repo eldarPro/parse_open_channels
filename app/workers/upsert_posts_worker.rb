@@ -54,7 +54,7 @@ class UpsertPostsWorker
       create_post_infos_values = []
 
       data_values.each do |val|
-        channel_post_id = posts_data.as_json.find{ _1['tg_id'] == val[:tg_id] && _1['channel_id'] == val[:channel_id] }&.['id']
+        channel_post_id = posts_data.as_json.find{ _1['tg_id'] == val[:tg_id] && _1['channel_id'] == val[:channel_id] }['id'] rescue nil
         next if channel_post_id.blank?
 
         # Сollection ChannelPostStat data
