@@ -8,10 +8,10 @@ class MovePostsWorker
     last_move_post_id = Redis0.get('last_move_post_id').to_i
 
     MainDb::Post.where(campaign: true).where('id > ?', last_move_post_id).find_in_batches(batch_size: 1000) do |old_posts|
+      new_post_values = []
+
       old_posts.each do |p|
-
         next if p.channel_id.blank? || p.tg_id.blank?
-
         new_post_values << "(#{[ActiveRecord::Base.connection.quote(p.channel_id),
           ActiveRecord::Base.connection.quote(p.order_channel_id),     
          ActiveRecord::Base.connection.quote(p.tg_id),
@@ -34,6 +34,8 @@ class MovePostsWorker
          ActiveRecord::Base.connection.quote(p.created_at),
          ActiveRecord::Base.connection.quote(p.updated_at)].join(', ')})"
       end
+
+      next if new_post_values.blank?
         
       posts_data = MainDbRecord.connection.execute("INSERT INTO channel_posts
         (channel_id, order_channel_id, tg_id, link, kind, views, has_photo, has_video, top_hours, feed_hours, published_at, deleted_at, next_post_at, skip_screen, has_external_links, is_repost, 
