@@ -7,7 +7,7 @@ class MovePostsWorker
 
     last_move_post_id = Redis0.get('last_move_post_id').to_i
 
-    MainDb::Post.where(campaign: true).where('id > ?', last_move_post_id).find_in_batches(batch_size: 5000) do |old_posts|
+    MainDb::Post.where(campaign: false).where('id > ? AND created_at > ?', last_move_post_id, 1.year.ago).find_in_batches(batch_size: 5000) do |old_posts|
       new_post_values = []
 
       old_posts.each do |p|
