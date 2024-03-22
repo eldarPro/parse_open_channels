@@ -43,7 +43,7 @@ class MovePostsWorker
         VALUES #{new_post_values.join(', ')} ON CONFLICT DO NOTHING RETURNING id, tg_id, channel_id")
 
       Redis0.set('last_move_post_id', old_posts.last.id)
-      Redis0.set('move_posts_count', (Redis0.get('move_posts_count').to_i + 1000)) 
+      Redis0.set('move_posts_count', (Redis0.get('move_posts_count').to_i + 5000)) 
 
       create_post_infos_values = []
       create_post_stats_values = []
