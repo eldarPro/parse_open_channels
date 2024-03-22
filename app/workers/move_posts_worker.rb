@@ -43,7 +43,7 @@ class MovePostsWorker
         VALUES #{new_post_values.join(', ')} ON CONFLICT DO NOTHING RETURNING id, tg_id, channel_id")
 
       Redis0.set('last_move_post_id', old_posts.last.id)
-      Redis0.set('move_posts_count', (Redis0.get('move_posts_count').to_i + 5000)) 
+      Redis0.set('move_posts_count', (Redis0.get('move_posts_count').to_i + 4000)) 
 
       create_post_infos_values = []
       create_post_stats_values = []
@@ -66,7 +66,7 @@ class MovePostsWorker
 
         if p.text.present? && p.text.length > 0
           create_post_infos_values << "(#{[channel_post_id, ActiveRecord::Base.connection.quote(p.text), p.text.length,
-                                           ActiveRecord::Base.connection.quote_default_expression(p.links, links_column)].join(', ')}, NOW())"   
+                                           ActiveRecord::Base.connection.quote_default_expression(p.links, links_column), ActiveRecord::Base.connection.quote(p.created_at)].join(', ')})"   
         end
       end
 
