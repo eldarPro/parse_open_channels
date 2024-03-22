@@ -7,7 +7,7 @@ class ActiveWorkers
   end
 
   def is_active?
-    Sidekiq::Workers.new.map(&:last).find{ |i| i['payload']['class'] == worker_name }.present? rescue false
+    Sidekiq::Workers.new.map(&:last).find{ |i| JSON.parse(i['payload'])['class'] == worker_name }.present? rescue false
   end
 
 end
