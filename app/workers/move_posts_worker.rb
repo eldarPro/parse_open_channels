@@ -2,12 +2,14 @@ class MovePostsWorker
   include Sidekiq::Job
   sidekiq_options queue: :default, retry: 0
 
+  MOVE_COUNT = 10000
+
   def perform
     return if ActiveWorkers.new(self.class.to_s).is_active?
 
     last_move_post_id = Redis0.get('last_move_post_id').to_i
 
-    MainDb::Post.where(campaign: false).where('id > ? AND created_at > ?', last_move_post_id, 1.year.ago).find_in_batches(batch_size: 5000) do |old_posts|
+    MainDb::Post.where(campaign: false).where('id > ? AND created_at > ?', last_move_post_id, 1.year.ago).find_in_batches(batch_size: MOVE_COUNT) do |old_posts|
       new_post_values = []
 
       old_posts.each do |p|
@@ -43,7 +45,7 @@ class MovePostsWorker
         VALUES #{new_post_values.join(', ')} ON CONFLICT DO NOTHING RETURNING id, tg_id, channel_id")
 
       Redis0.set('last_move_post_id', old_posts.last.id)
-      Redis0.set('move_posts_count', (Redis0.get('move_posts_count').to_i + 5000)) 
+      Redis0.set('move_posts_count', (Redis0.get('move_posts_count').to_i + MOVE_COUNT)) 
 
       create_post_infos_values = []
       create_post_stats_values = []
