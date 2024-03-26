@@ -14,10 +14,9 @@ class UpsertPostsWorker
 
       break unless data_values.present?
 
-      data_values = data_values.map{ JSON.parse(_1) }.uniq{ _1[0] } # Отсекаем дубли по link
-
-      # Создание постов | ChannelPost
+      # Сборка ChannelPost
       posts_values = data_values.map do |val| 
+        val = JSON.parse(_1)
         "(#{[ActiveRecord::Base.connection.quote(val[0]),
          ActiveRecord::Base.connection.quote(val[1]),
          ActiveRecord::Base.connection.quote(val[2]),
@@ -35,7 +34,7 @@ class UpsertPostsWorker
          NOW())"
       end.join(', ')
 
-      # Создание постов | ChannelPost
+      # Создание ChannelPost
       posts_data = MainDbRecord.connection.execute("INSERT INTO channel_posts AS p
         (link, tg_id, views, has_photo, has_video, published_at, next_post_at, is_repost, channel_id, feed_hours, top_hours, last_parsed_at, created_at, updated_at)
         VALUES #{posts_values} ON CONFLICT (link) DO UPDATE SET 
@@ -57,9 +56,9 @@ class UpsertPostsWorker
         channel_post_id = posts_data.as_json.find{ _1['tg_id'] == val[:tg_id] && _1['channel_id'] == val[:channel_id] }['id'] rescue nil
         next if channel_post_id.blank?
 
-        # Сollection ChannelPostStat data
+        # Сборка ChannelPostStat
         create_post_stats_values << "(#{[channel_post_id, ActiveRecord::Base.connection.quote(val[2])].join(', ')}, NOW())" 
-        # Сollection ChannelPostInfo data
+        # Сборка ChannelPostInfo
         create_post_infos_values << "(#{[channel_post_id, ActiveRecord::Base.connection.quote(val[8]), val[8].length,
                                          ActiveRecord::Base.connection.quote(val[3].to_json)].join(', ')}, NOW())" 
       end

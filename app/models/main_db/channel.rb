@@ -3,11 +3,7 @@ module MainDb
     has_many :posts, dependent: :destroy
     
     def self.opens
-      where(by_web_parse: [true, nil], inner: false)
-    end
-
-    def self.active
-      where('subscribers >= 2000')
+      where(by_telethon_parse: false, inner: false, is_blocked: false).where('subscribers >= 2000')
     end
 
     def link
