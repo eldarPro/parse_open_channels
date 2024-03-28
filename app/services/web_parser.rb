@@ -46,7 +46,7 @@ class WebParser
       present_old_7day_post = false
       posts.each do |post_data| 
         present_old_7day_post = true and next if post_data[6] < 7.days.ago # published_at < 7.days.ago
-        Redis0.rpush('post_data', post_data.to_json)
+        #Redis0.rpush('posts_data', post_data.to_json)
       end
       current_count_posts = count_posts + posts.length
       return if present_old_7day_post     # Остановка если уже есть пост страше 7-дней
@@ -70,8 +70,11 @@ class WebParser
     url = "https://t.me/s/#{channel_name}?before=#{before_post_id}"
     doc = SendRequest.new(url).call
 
-    return nil if doc == :failed
-    
+    if doc == :failed
+      Redis0.rpush('failed_channels', channel_name)
+      return nil 
+    end
+
     by_telethon_parse = true
     posts = []
 
@@ -98,7 +101,15 @@ class WebParser
 
     doc = SendRequest.new(link, proxy: true).call
 
-    return nil if doc&.css('.tgme_page_extra')&.blank?
+    if doc == :failed
+      Redis0.rpush('failed_channels', channel_name)
+      return nil 
+    end
+
+    if doc&.css('.tgme_page_extra')&.blank?
+      Redis0.rpush('empty_channels', channel_name)
+      return nil 
+    end
       
     subscribers    = doc.css('.tgme_page_extra').text.gsub(' ', '').to_i
     title          = doc.css(".tgme_page .tgme_page_title span").text
