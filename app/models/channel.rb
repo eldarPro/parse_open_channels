@@ -21,7 +21,7 @@ class Channel < ApplicationRecord
   end
 
   def self.ransackable_attributes(auth_object = nil)
-    ["apr_calculated_at", "avatar_updated_at", "avatar_url", "average_views", "broadcast", "by_telethon_parse", "by_web_parse", "created_at", "description", "from_external_link", "get_last_posts_at", "id", "inner", "is_empty", "is_private", "is_verify", "joinchat", "lang", "last_eternal_apr", "last_eternal_err", "last_post_date", "last_post_id", "name", "new_tg_id", "stat", "subscribers", "tg_id", "title", "update_info_at", "updated_at", "updated_parse_mode_at"]
+    ["apr_calculated_at", "avatar_updated_at", "avatar_url", "average_views", "broadcast", "by_telethon_parse", "by_web_parse", "created_at", "description", "from_external_link", "get_last_posts_at", "id", "inner", "is_empty", "is_private", "is_verify", "joinchat", "lang", "last_eternal_apr", "last_eternal_err", "last_post_date", "name", "new_tg_id", "stat", "subscribers", "tg_id", "title", "update_info_at", "updated_at", "updated_parse_mode_at"]
   end
 
 end

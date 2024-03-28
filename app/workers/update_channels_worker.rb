@@ -12,7 +12,7 @@ class UpdateChannelsWorker
     count_batch.times do
       values = Redis0.lrange('channels_data', 0, 999)
 
-      # channel_id, subscribers, title, description, is_verify, update_info_at, by_telethon_parse, last_post_id, last_post_date
+      # channel_id, subscribers, title, description, is_verify, update_info_at, by_telethon_parse, last_post_date
 
       update_values = []
       insert_values = []
@@ -37,8 +37,7 @@ class UpdateChannelsWorker
              ActiveRecord::Base.connection.quote(val[4]),
              ActiveRecord::Base.connection.quote(val[5]),
              ActiveRecord::Base.connection.quote(by_telethon_parse),
-             ActiveRecord::Base.connection.quote(val[7]),
-             ActiveRecord::Base.connection.quote(val[8])
+             ActiveRecord::Base.connection.quote(val[7])
            ].join(', ')})"
 
            Redis0.set("last_channel_data:#{channel_id}", [subscribers, title, description, by_telethon_parse].to_json)
@@ -57,11 +56,10 @@ class UpdateChannelsWorker
             is_verify = d.is_verify,
             update_info_at = CAST(d.update_info_at AS TIMESTAMP WITH TIME ZONE),
             by_telethon_parse = d.by_telethon_parse,
-            last_post_id = CASE WHEN d.last_post_id IS NOT NULL THEN CAST(d.last_post_id AS INTEGER) ELSE c.last_post_id END,
             last_post_date = CASE WHEN d.last_post_date IS NOT NULL THEN CAST(d.last_post_date AS TIMESTAMP WITH TIME ZONE) ELSE c.last_post_date END
           FROM (VALUES #{update_values.join(', ')}) AS 
           d(id, subscribers, title, description, is_verify, update_info_at, 
-          by_telethon_parse, last_post_id, last_post_date)
+          by_telethon_parse, last_post_date)
           where c.id = d.id;")
       end
 

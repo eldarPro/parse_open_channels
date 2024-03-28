@@ -2,7 +2,6 @@ class WebParser
 
   attr_accessor :channel_id
   attr_accessor :channel_name
-  attr_accessor :last_post_id
   attr_accessor :before_post_id
   attr_accessor :first_page_parse
   attr_accessor :post_views_key
@@ -10,10 +9,9 @@ class WebParser
 
   CHANGE_STRUCT = 'change_struct'
 
-  def initialize(channel_id, channel_name, last_post_id = nil, before_post_id = nil, count_posts = 0)
+  def initialize(channel_id, channel_name, before_post_id = nil, count_posts = 0)
     @channel_id       = channel_id
     @channel_name     = channel_name
-    @last_post_id     = last_post_id
     @before_post_id   = before_post_id
     @first_page_parse = before_post_id.nil?
     @post_views_key   = "post_views:#{channel_id}:#{Time.now.strftime('%d_%H')}"
@@ -53,17 +51,15 @@ class WebParser
       current_count_posts = count_posts + posts.length
       return if present_old_7day_post     # Остановка если уже есть пост страше 7-дней
       return if current_count_posts >= 70 # Остановка если уже набралась 70 постов
-      ParseChannelWorker.perform_async(channel_id, channel_name, last_post_id, posts.first[1], current_count_posts) 
+      ParseChannelWorker.perform_async(channel_id, channel_name, posts.first[1], current_count_posts) 
     end
 
     #========= КАНАЛЫ ===============
     return if !first_page_parse || channels.blank?
 
-    last_post_id   = posts.last[1] rescue nil
     last_post_date = posts.last[6] rescue nil
 
     channels << by_telethon_parse
-    channels << last_post_id
     channels << last_post_date
     Redis0.rpush('channels_data', channels.to_json)
   end
