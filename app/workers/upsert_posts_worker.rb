@@ -16,7 +16,7 @@ class UpsertPostsWorker
 
       # Сборка ChannelPost
       posts_values = data_values.map do |val| 
-        val = JSON.parse(_1)
+        val = JSON.parse(val)
         "(#{[ActiveRecord::Base.connection.quote(val[0]),
          ActiveRecord::Base.connection.quote(val[1]),
          ActiveRecord::Base.connection.quote(val[2]),
