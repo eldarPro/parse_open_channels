@@ -28,6 +28,8 @@ module ParseChannels
     end
 
     config.active_record.cache_versioning = false
+    
+    config.time_zone = ActiveSupport::TimeZone[3].name
 
     config.active_job.queue_adapter = :sidekiq
   end

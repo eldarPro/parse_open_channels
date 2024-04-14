@@ -46,7 +46,7 @@ class WebParser
       present_old_7day_post = false
       posts.each do |post_data| 
         present_old_7day_post = true and next if post_data[6] < 7.days.ago # published_at < 7.days.ago
-        #Redis0.rpush('posts_data', post_data.to_json)
+        Redis0.rpush('posts_data', post_data.to_json)
       end
       current_count_posts = count_posts + posts.length
       return if present_old_7day_post     # Остановка если уже есть пост страше 7-дней
