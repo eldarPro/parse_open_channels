@@ -57,10 +57,8 @@ class WebParser
     #========= КАНАЛЫ ===============
     return if !first_page_parse || channels.blank?
 
-    last_post_date = posts.last[6] rescue nil
-
     channels << by_telethon_parse
-    channels << last_post_date
+    channels << (posts.last[6] rescue nil) # last_post_date
     Redis0.rpush('channels_data', channels.to_json)
   end
 
@@ -128,15 +126,11 @@ class WebParser
 
   def add_other_data_to_post_data(post_data)
     post_data << channel_id
-
     feed_hours = (Time.now - post_data[6].to_time) / 1.hour # Time.now - published_at
-
-    if post_data[7].blank? # next_post_at.blank?
-      top_hours = feed_hours
-    else
+    top_hours = feed_hours
+    if post_data[7].present? # next_post_at.blank?
       top_hours = (post_data[7].to_time - post_data[6].to_time) / 1.hour # next_post_at - published_at
     end
-
     post_data << feed_hours
     post_data << top_hours
     post_data << Time.now.strftime('%d.%m.%Y %H:%M:%S')
