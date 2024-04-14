@@ -4,7 +4,7 @@ class UpsertPostsWorker
   sidekiq_options queue: :critical, retry: 0
 
   def perform
-    return if ActiveWorkers.new(self.class.to_s).is_active?
+    return if ActiveWorkers.new(self).is_active?
 
     # Обновление по 1000 штук
     count_batch = (Redis0.llen('posts_data') / 1000.to_f).ceil

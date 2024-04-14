@@ -1,4 +1,5 @@
 default: &default
+  query_cache: false
   adapter: postgresql
   encoding: unicode
   pool: 50
@@ -23,6 +24,7 @@ production:
   database: open_parsing
   username: deployer
   password: parse_channels000777
+ 
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".

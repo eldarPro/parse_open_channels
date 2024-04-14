@@ -5,7 +5,7 @@ class MovePostsWorker
   MOVE_COUNT = 10000
 
   def perform
-    return if ActiveWorkers.new(self.class.to_s).is_active?
+    return if ActiveWorkers.new(self).is_active?
 
     last_move_post_id = Redis0.get('last_move_post_id').to_i
 
